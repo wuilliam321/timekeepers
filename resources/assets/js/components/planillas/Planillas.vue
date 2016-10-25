@@ -38,7 +38,7 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="planilla in planillas">
+                        <tr v-for="planilla in planillas"  @click="togglePlanillaView">
                             <!-- Action -->
                             <td style="vertical-align: middle;">
                                 +
@@ -71,12 +71,17 @@
                         </tr>
                     </tbody>
                 </table>
+                <horas v-bind:horas="horas"></horas>
+                <tiempos></tiempos>
             </div>
         </div>
     </div>
 </template>
 
 <script>
+    import Horas from './HoraEntrada.vue'
+    import TiempoTrabajado from './TiempoTrabajado.vue'
+
     export default {
         /*
          * The component's data.
@@ -84,6 +89,7 @@
         data() {
             return {
                 planillas: [],
+                horas: [],
             };
         },
 
@@ -115,9 +121,30 @@
             getPlanillas() {
                 this.$http.get('/api/planillas').then(response => {
                     this.planillas = response.data;
-                    console.log(this.planillas);
                 });
             },
-        }
+
+            togglePlanillaView(event) {
+                this.horas = [
+                    {
+                        fecha_entrada: '2016-10-23',
+                        hora_entrada: '06:30:00'
+                    },
+                    {
+                        fecha_entrada: '2016-10-24',
+                        hora_entrada: '07:00:00'
+                    },
+                    {
+                        fecha_entrada: '2016-10-25',
+                        hora_entrada: '07:30:00'
+                    },
+                ];
+            }
+        },
+
+        components: {
+            horas: Horas,
+            tiempos: TiempoTrabajado
+        },
     }
 </script>

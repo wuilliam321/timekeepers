@@ -30,9 +30,20 @@ Vue.component(
     require('./components/passport/PersonalAccessTokens.vue')
 );
 
+/**
+ * Planillas components
+ */
 Vue.component(
     'planillas-index',
     require('./components/planillas/Planillas.vue')
+);
+Vue.component(
+    'planillas-hora-entrada',
+    require('./components/planillas/HoraEntrada.vue')
+);
+Vue.component(
+    'planillas-tiempo-trabajado',
+    require('./components/planillas/TiempoTrabajado.vue')
 );
 
 const app = new Vue({
