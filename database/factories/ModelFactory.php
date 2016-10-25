@@ -21,3 +21,25 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'remember_token' => str_random(10),
     ];
 });
+
+$factory->define(App\Proyecto::class, function (Faker\Generator $faker) {
+    return [
+        'nombre' => $faker->name,
+    ];
+});
+
+$factory->define(App\Colaboradore::class, function (Faker\Generator $faker) {
+    return [
+        'nombre' => $faker->name,
+        'cedula' => $faker->bothify('##########'),
+        'tipo_salario' => $faker->randomElement(['Hora', 'Proyecto']),
+    ];
+});
+
+$factory->define(App\Planilla::class, function (Faker\Generator $faker) {
+    return [
+        'colaborador_id' => $faker->numberBetween(1,10),
+        'proyecto_id' => $faker->numberBetween(1,10),
+        'codigo' => $faker->bothify('??######'),
+    ];
+});
