@@ -17,7 +17,7 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:api');
 
-Route::get('/planillas', function (App\Planilla $planilla) {
+Route::get('/planillas', function () {
     return DB::table('planillas')
         ->join('colaboradores', 'colaboradores.id', '=', 'planillas.colaborador_id')
         ->join('proyectos', 'proyectos.id', '=', 'planillas.proyecto_id')
@@ -29,4 +29,9 @@ Route::get('/planillas', function (App\Planilla $planilla) {
             'proyectos.nombre as nombre_proyecto')
         ->get();
 
+})->middleware('auth:api');
+
+
+Route::get('/horas_entrada/{id}', function ($id) {
+    return DB::table('horas_entrada')->where('colaborador_id', '=', $id)->get();
 })->middleware('auth:api');
