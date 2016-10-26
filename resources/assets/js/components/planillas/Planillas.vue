@@ -74,8 +74,8 @@
                                 <td colspan="6">
                                     <div class="panel panel-default">
                                         <div class="panel-body">
-                                            <horas v-bind:colaborador_id="planilla.colaborador_id"></horas>
-                                            <tiempos v-bind:colaborador_id="planilla.colaborador_id"></tiempos>
+                                            <horas-entrada v-bind:colaborador_id="planilla.colaborador_id"></horas-entrada>
+                                            <horas-trabajadas v-bind:colaborador_id="planilla.colaborador_id"></horas-trabajadas>
                                         </div>
                                     </div>
                                 </td>
@@ -89,8 +89,8 @@
 </template>
 
 <script>
-    import Horas from './HoraEntrada.vue'
-    import TiempoTrabajado from './TiempoTrabajado.vue'
+    import HorasEntrada from './HorasEntrada.vue'
+    import HorasTrabajadas from './HorasTrabajadas.vue'
 
     export default {
         /*
@@ -141,8 +141,8 @@
         },
 
         components: {
-            horas: Horas,
-            tiempos: TiempoTrabajado
+            horasEntrada: HorasEntrada,
+            horasTrabajadas: HorasTrabajadas
         },
     }
 </script>

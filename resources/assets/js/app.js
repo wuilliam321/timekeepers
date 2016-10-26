@@ -39,11 +39,11 @@ Vue.component(
 );
 Vue.component(
     'planillas-hora-entrada',
-    require('./components/planillas/HoraEntrada.vue')
+    require('./components/planillas/HorasEntrada.vue')
 );
 Vue.component(
     'planillas-tiempo-trabajado',
-    require('./components/planillas/TiempoTrabajado.vue')
+    require('./components/planillas/HorasTrabajadas.vue')
 );
 
 const app = new Vue({
