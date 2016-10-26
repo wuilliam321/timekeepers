@@ -31,7 +31,14 @@ Route::get('/planillas', function () {
 
 })->middleware('auth:api');
 
-
 Route::get('/horas_entrada/{id}', function ($id) {
     return DB::table('horas_entrada')->where('colaborador_id', '=', $id)->get();
+})->middleware('auth:api');
+
+Route::get('/horas_entrada/{id}/limit/{limit}', function ($id, $limit) {
+    return DB::table('horas_entrada')
+        ->where('colaborador_id', '=', $id)
+        ->orderBy('fecha_entrada', 'desc')
+        ->limit($limit)
+        ->get();
 })->middleware('auth:api');

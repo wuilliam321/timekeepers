@@ -38,41 +38,51 @@
                     </thead>
 
                     <tbody>
-                        <tr v-for="planilla in planillas"  @click="togglePlanillaView">
-                            <!-- Action -->
-                            <td style="vertical-align: middle;">
-                                +
-                            </td>
+                        <template v-for="planilla in planillas">
+                            <tr @click="togglePlanillaView">
+                                <!-- Action -->
+                                <td style="vertical-align: middle;">
+                                    +
+                                </td>
 
-                            <!-- Name -->
-                            <td style="vertical-align: middle;">
-                                {{ planilla.nombre_colaborador }}
-                            </td>
+                                <!-- Name -->
+                                <td style="vertical-align: middle;">
+                                    {{ planilla.nombre_colaborador }}
+                                </td>
 
-                            <!-- Cedula -->
-                            <td style="vertical-align: middle;">
-                                {{ planilla.cedula }}
-                            </td>
+                                <!-- Cedula -->
+                                <td style="vertical-align: middle;">
+                                    {{ planilla.cedula }}
+                                </td>
 
-                            <!-- Proyecto -->
-                            <td style="vertical-align: middle;">
-                                {{ planilla.nombre_proyecto }}
-                            </td>
+                                <!-- Proyecto -->
+                                <td style="vertical-align: middle;">
+                                    {{ planilla.nombre_proyecto }}
+                                </td>
 
-                            <!-- Codigo -->
-                            <td style="vertical-align: middle;">
-                                {{ planilla.codigo }}
-                            </td>
+                                <!-- Codigo -->
+                                <td style="vertical-align: middle;">
+                                    {{ planilla.codigo }}
+                                </td>
 
-                            <!-- Tipo Salario -->
-                            <td style="vertical-align: middle;">
-                                {{ planilla.tipo_salario}}
-                            </td>
-                        </tr>
+                                <!-- Tipo Salario -->
+                                <td style="vertical-align: middle;">
+                                    {{ planilla.tipo_salario}}
+                                </td>
+                            </tr>
+                            <tr class="horas-container hidden">
+                                <td colspan="6">
+                                    <div class="panel panel-default">
+                                        <div class="panel-body">
+                                            <horas v-bind:colaborador_id="planilla.colaborador_id"></horas>
+                                            <tiempos v-bind:colaborador_id="planilla.colaborador_id"></tiempos>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </template>
                     </tbody>
                 </table>
-                <horas v-bind:horas="horas"></horas>
-                <tiempos></tiempos>
             </div>
         </div>
     </div>
@@ -125,20 +135,8 @@
             },
 
             togglePlanillaView(event) {
-                this.horas = [
-                    {
-                        fecha_entrada: '2016-10-23',
-                        hora_entrada: '06:30:00'
-                    },
-                    {
-                        fecha_entrada: '2016-10-24',
-                        hora_entrada: '07:00:00'
-                    },
-                    {
-                        fecha_entrada: '2016-10-25',
-                        hora_entrada: '07:30:00'
-                    },
-                ];
+                var $element = $(event.currentTarget);
+                $element.next().toggleClass('hidden');
             }
         },
 

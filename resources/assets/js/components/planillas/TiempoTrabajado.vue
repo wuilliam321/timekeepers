@@ -9,16 +9,7 @@
 </style>
 
 <template>
-    <div>
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>
-                        Tiempo trabajado
-                    </span>
-                </div>
-            </div>
-        </div>
+    <div v-if="tiempos.length > 0">
     </div>
 </template>
 
@@ -61,7 +52,7 @@
             getTiempos() {
                 this.$http.get('/api/tiempos').then(response => {
                     this.tiempos = response.data;
-            });
+                });
             },
         }
     }
