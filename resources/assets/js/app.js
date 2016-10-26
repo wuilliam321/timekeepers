@@ -43,7 +43,7 @@ Vue.component(
 );
 Vue.component(
     'planillas-tiempo-trabajado',
-    require('./components/planillas/HorasTrabajadas.vue')
+    require('./components/planillas/HorasLaboradas.vue')
 );
 
 const app = new Vue({

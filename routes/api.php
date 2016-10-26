@@ -38,7 +38,11 @@ Route::get('/horas_entrada/{id}', function ($id) {
 Route::get('/horas_entrada/{id}/limit/{limit}', function ($id, $limit) {
     return DB::table('horas_entrada')
         ->where('colaborador_id', '=', $id)
-        ->orderBy('fecha_entrada', 'desc')
+        ->orderBy('fecha_entrada', 'asc')
         ->limit($limit)
         ->get();
 })->middleware('auth:api');
+
+
+Route::get('/horas_laboradas/{id}', 'HorasLaboradasController@getHorasLaboradasWithLastDates')
+    ->middleware('auth:api');

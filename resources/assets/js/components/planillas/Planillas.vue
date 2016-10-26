@@ -39,7 +39,7 @@
 
                     <tbody>
                         <template v-for="planilla in planillas">
-                            <tr @click="togglePlanillaView">
+                            <tr @click="togglePlanillaView" v-bind:data-id="planilla.colaborador_id">
                                 <!-- Action -->
                                 <td style="vertical-align: middle;">
                                     +
@@ -74,8 +74,8 @@
                                 <td colspan="6">
                                     <div class="panel panel-default">
                                         <div class="panel-body">
-                                            <horas-entrada v-bind:colaborador_id="planilla.colaborador_id"></horas-entrada>
-                                            <horas-trabajadas v-bind:colaborador_id="planilla.colaborador_id"></horas-trabajadas>
+                                            <horas-entrada v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
+                                            <horas-laboradas v-bind:horas_laboradas="horas_laboradas[planilla.colaborador_id]"></horas-laboradas>
                                         </div>
                                     </div>
                                 </td>
@@ -90,7 +90,7 @@
 
 <script>
     import HorasEntrada from './HorasEntrada.vue'
-    import HorasTrabajadas from './HorasTrabajadas.vue'
+    import HorasLaboradas from './HorasLaboradas.vue'
 
     export default {
         /*
@@ -99,7 +99,8 @@
         data() {
             return {
                 planillas: [],
-                horas: [],
+                horas_entrada: {},
+                horas_laboradas: {},
             };
         },
 
@@ -137,12 +138,40 @@
             togglePlanillaView(event) {
                 var $element = $(event.currentTarget);
                 $element.next().toggleClass('hidden');
-            }
+
+                if (!$element.hasClass('hidden')) {
+                    this.getHorasEntrada($element.data('id'));
+                    this.getHorasLaboradas($element.data('id'));
+                }
+            },
+
+            getHorasEntrada(colaborador_id) {
+                var vm = this;
+                if (colaborador_id) {
+                    this.$http.get('/api/horas_entrada/' + colaborador_id + '/limit/3').then(response => {
+                        var horas = _.clone(vm.horas_entrada);;
+                        horas[colaborador_id] = response.data;
+                        Vue.set(vm, 'horas_entrada', horas);
+                    });
+                }
+            },
+
+            getHorasLaboradas(colaborador_id) {
+                var vm = this;
+                if (colaborador_id) {
+                    this.$http.get('/api/horas_laboradas/' + colaborador_id).then(response => {
+                        console.log(response.data);
+                        var horas = _.clone(vm.horas_laboradas);;
+                        horas[colaborador_id] = response.data;
+                        Vue.set(vm, 'horas_laboradas', horas);
+                    });
+                }
+            },
         },
 
         components: {
             horasEntrada: HorasEntrada,
-            horasTrabajadas: HorasTrabajadas
+            horasLaboradas: HorasLaboradas
         },
     }
 </script>

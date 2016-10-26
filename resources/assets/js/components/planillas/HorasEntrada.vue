@@ -9,13 +9,14 @@
 </style>
 
 <template>
-    <div v-if="horas.length > 0">
+    <div>
         <!-- Current Planillas -->
         <table class="table table-borderless m-b-none">
             <thead>
                 <tr>
                     <th></th>
-                    <th v-for="hora in horas">
+                    <!-- TODO: Aqui deben estar los ultimos tres dias junto con sus valores -->
+                    <th v-for="hora in horas_entrada">
                         {{ hora.fecha_entrada | date_format('MMM-DD') }}
                     </th>
                 </tr>
@@ -29,7 +30,7 @@
                 </td>
 
                 <!-- Name -->
-                <td style="vertical-align: middle;" v-for="hora in horas">
+                <td style="vertical-align: middle;" v-for="hora in horas_entrada">
                     {{ hora.fecha_entrada | date_format('HH:mm') }}
                 </td>
             </tr>
@@ -45,11 +46,10 @@
          */
         data() {
             return {
-                horas: [],
             };
         },
 
-        props: ['colaborador_id'],
+        props: ['horas_entrada'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -70,14 +70,11 @@
              * Prepare the component.
              */
             prepareComponent() {
-                this.getHorasEntrada();
             },
 
-            getHorasEntrada() {
-                this.$http.get('/api/horas_entrada/' + this.colaborador_id + '/limit/3').then(response => {
-                    this.horas = response.data;
-                });
-            },
+            showDetails() {
+                console.log('showingDetails');
+            }
         },
 
         filters: {
