@@ -44,10 +44,15 @@ $factory->define(App\Planilla::class, function (Faker\Generator $faker) {
     ];
 });
 
-
 $factory->define(App\HorasEntrada::class, function (Faker\Generator $faker) {
     return [
         'colaborador_id' => $faker->numberBetween(1,10),
         'fecha_entrada' => $faker->dateTimeBetween('-10 days', 'now'),
+    ];
+});
+
+$factory->define(App\CuentasCosto::class, function (Faker\Generator $faker) {
+    return [
+        'nombre' => $faker->words(4, true) . ' project',
     ];
 });
