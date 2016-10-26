@@ -53,6 +53,12 @@ $factory->define(App\HorasEntrada::class, function (Faker\Generator $faker) {
 
 $factory->define(App\CuentasCosto::class, function (Faker\Generator $faker) {
     return [
-        'nombre' => $faker->words(4, true) . ' project',
+        'nombre' => $faker->bothify('#.#.#.### costo ') . $faker->words(1, true) . $faker->bothify(' (???)'),
+    ];
+});
+
+$factory->define(App\CuentasBeneficio::class, function (Faker\Generator $faker) {
+    return [
+        'nombre' => $faker->bothify('#.#.#.### beneficio ') . $faker->words(1, true) . $faker->bothify(' (???)'),
     ];
 });

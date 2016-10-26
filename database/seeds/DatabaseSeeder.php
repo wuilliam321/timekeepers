@@ -16,5 +16,6 @@ class DatabaseSeeder extends Seeder
         $this->call(PlanillasTableSeeder::class);
         $this->call(HorasEntradaTableSeeder::class);
         $this->call(CuentasCostoTableSeeder::class);
+        $this->call(CuentasBeneficioTableSeeder::class);
     }
 }
