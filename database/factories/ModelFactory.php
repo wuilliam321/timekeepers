@@ -68,3 +68,16 @@ $factory->define(App\Beneficio::class, function (Faker\Generator $faker) {
         'nombre' => $faker->words(2, true),
     ];
 });
+
+$factory->define(App\HorasLaborada::class, function (Faker\Generator $faker) {
+    return [
+        'colaborador_id' => $faker->numberBetween(1, 10),
+        'proyecto_id' => $faker->numberBetween(1, 10),
+        'planilla_id' => $faker->numberBetween(1, 30),
+        'cuenta_costo_id' => $faker->numberBetween(1, 50),
+        'beneficio_id' => $faker->numberBetween(1, 40),
+        'cuenta_beneficio_id' => $faker->numberBetween(1, 50),
+        'fecha_laborada' => $faker->dateTimeBetween('-10 days', 'now'),
+        'horas_laboradas' => $faker->numberBetween(1, 8),
+    ];
+});

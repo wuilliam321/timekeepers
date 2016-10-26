@@ -18,5 +18,6 @@ class DatabaseSeeder extends Seeder
         $this->call(CuentasCostoTableSeeder::class);
         $this->call(CuentasBeneficioTableSeeder::class);
         $this->call(BeneficioTableSeeder::class);
+        $this->call(HorasLaboradaTableSeeder::class);
     }
 }

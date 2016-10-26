@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class PlanillasTableSeeder extends Seeder
+class HorasLaboradaTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,6 +11,6 @@ class PlanillasTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Planilla::class, 30)->create();
+        factory(App\HorasLaborada::class, 100)->create();
     }
 }
