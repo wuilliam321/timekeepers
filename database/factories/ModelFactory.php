@@ -62,3 +62,9 @@ $factory->define(App\CuentasBeneficio::class, function (Faker\Generator $faker) 
         'nombre' => $faker->bothify('#.#.#.### beneficio ') . $faker->words(1, true) . $faker->bothify(' (???)'),
     ];
 });
+
+$factory->define(App\Beneficio::class, function (Faker\Generator $faker) {
+    return [
+        'nombre' => $faker->words(2, true),
+    ];
+});
