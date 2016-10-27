@@ -31,7 +31,7 @@
                 <!-- Name -->
                 <!-- TODO: Aqui deben estar los ultimos tres dias junto con sus valores -->
                 <td style="vertical-align: middle;" v-for="hora in horas_entrada">
-                    {{ hora.fecha_entrada | date_format('HH:mm') }}
+                    {{ hora.hora_entrada | date_format('HH:mm') }}
                 </td>
             </tr>
             </tbody>

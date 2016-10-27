@@ -12,4 +12,11 @@ class HorasEntrada extends Model
      * @var string
      */
     protected $table = 'horas_entrada';
+
+    public function getByColaboradorId($id)
+    {
+        return $this->where('colaborador_id', '=', $id)
+            ->orderBy('fecha_entrada', 'asc')
+            ->get();
+    }
 }

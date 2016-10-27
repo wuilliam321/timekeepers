@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\DB;
 
 class HorasLaborada extends Model
 {
@@ -16,8 +15,7 @@ class HorasLaborada extends Model
 
     public function getByColaboradorId($id)
     {
-        return DB::table($this->table)
-            ->join('proyectos', 'proyectos.id', '=', $this->table . '.colaborador_id')
+        return $this->join('proyectos', 'proyectos.id', '=', $this->table . '.colaborador_id')
             ->join('cuentas_costos', 'cuentas_costos.id', '=', $this->table . '.cuenta_costo_id')
             ->join('beneficios', 'beneficios.id', '=', $this->table . '.beneficio_id')
             ->join('cuentas_beneficios', 'cuentas_beneficios.id', '=', $this->table . '.cuenta_beneficio_id')

@@ -15,7 +15,6 @@ class HorasLaboradasController extends Controller
     {
         $horasLaboradasModel = new HorasLaborada();
         $horasLaboradas = $horasLaboradasModel->getByColaboradorId($id);
-//        return $horasLaboradas;
         return $this->mapUltimasHorasToHorasLaboradas($horasLaboradas);
     }
 
@@ -23,7 +22,7 @@ class HorasLaboradasController extends Controller
     {
         foreach ($horasLaboradas as $horasLaborada) {
             $horasLaboradasDetallesController = new HorasLaboradasDetallesController();
-            $horasLaborada->ultimas_horas = $horasLaboradasDetallesController->getUltimasHorasByHorasLaboradaId($horasLaborada->id, 3);
+            $horasLaborada->ultimas_horas = $horasLaboradasDetallesController->getUltimasHorasByHorasLaboradaId($horasLaborada->id);
         }
 
         return $horasLaboradas;

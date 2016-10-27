@@ -45,9 +45,11 @@ $factory->define(App\Planilla::class, function (Faker\Generator $faker) {
 });
 
 $factory->define(App\HorasEntrada::class, function (Faker\Generator $faker) {
+    $date = $faker->dateTimeBetween('-10 days', 'now');
     return [
         'colaborador_id' => $faker->numberBetween(1,10),
-        'fecha_entrada' => $faker->dateTimeBetween('-10 days', 'now'),
+        'fecha_entrada' => $date,
+        'hora_entrada' => $date,
     ];
 });
 

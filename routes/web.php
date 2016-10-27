@@ -19,4 +19,4 @@ Auth::routes();
 
 Route::get('/home', 'HomeController@index');
 
-Route::get('/planillas', 'PlanillaController@index');
+Route::get('/planillas', 'PlanillasController@index');
