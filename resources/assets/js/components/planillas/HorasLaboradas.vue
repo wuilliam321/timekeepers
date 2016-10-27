@@ -46,12 +46,17 @@
                     {{ hora.cuenta_costo_id}}
                 </td>
 
-                <!-- Cuenta de Costo -->
+                <!-- Dia 1 -->
                 <td style="vertical-align: middle;">
 
                 </td>
 
-                <!-- Cuenta de Costo -->
+                <!-- Dia 2 -->
+                <td style="vertical-align: middle;">
+
+                </td>
+
+                <!-- Dia 3 -->
                 <td style="vertical-align: middle;">
 
                 </td>
@@ -92,7 +97,6 @@
              * Prepare the component.
              */
             prepareComponent() {
-//                this.getHorasLaboradas();
             },
         },
 

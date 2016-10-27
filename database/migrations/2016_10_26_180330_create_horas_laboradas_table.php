@@ -15,8 +15,6 @@ class CreateHorasLaboradasTable extends Migration
     {
         Schema::create('horas_laboradas', function (Blueprint $table) {
             $table->increments('id');
-            $table->datetime('fecha_laborada');
-            $table->smallInteger('horas_laboradas')->unsigner();
 
             $table->integer('colaborador_id')->unsigned();
             $table->foreign('colaborador_id')->references('id')->on('colaboradores')

@@ -77,6 +77,12 @@ $factory->define(App\HorasLaborada::class, function (Faker\Generator $faker) {
         'cuenta_costo_id' => $faker->numberBetween(1, 50),
         'beneficio_id' => $faker->numberBetween(1, 40),
         'cuenta_beneficio_id' => $faker->numberBetween(1, 50),
+    ];
+});
+
+$factory->define(App\HorasLaboradasDetalle::class, function (Faker\Generator $faker) {
+    return [
+        'horas_laboradas_id' => $faker->numberBetween(1, 30),
         'fecha_laborada' => $faker->dateTimeBetween('-10 days', 'now'),
         'horas_laboradas' => $faker->numberBetween(1, 8),
     ];
