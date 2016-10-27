@@ -28,22 +28,22 @@
             <tr v-for="hora in horas_laboradas">
                 <!-- Proyecto -->
                 <td style="vertical-align: middle;">
-                    {{ hora.proyecto_id}}
+                    {{ hora.nombre_proyecto}}
                 </td>
 
                 <!-- Cuenta de Costo -->
                 <td style="vertical-align: middle;">
-                    {{ hora.cuenta_costo_id}}
+                    {{ hora.nombre_cuenta_costo}}
                 </td>
 
                 <!-- Beneficio -->
                 <td style="vertical-align: middle;">
-                    {{ hora.beneficio_id}}
+                    {{ hora.nombre_beneficio}}
                 </td>
 
                 <!-- Cuenta de Costo -->
                 <td style="vertical-align: middle;">
-                    {{ hora.cuenta_costo_id}}
+                    {{ hora.nombre_cuenta_beneficio}}
                 </td>
 
                 <!-- Dia 1 -->
