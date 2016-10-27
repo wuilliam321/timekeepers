@@ -44,5 +44,5 @@ Route::get('/horas_entrada/{id}/limit/{limit}', function ($id, $limit) {
 })->middleware('auth:api');
 
 
-Route::get('/horas_laboradas/{id}', 'HorasLaboradasController@getHorasLaboradasWithLastDates')
+Route::get('/horas_laboradas/{id}', 'HorasLaboradasController@getHorasLaboradasByColaboradorId')
     ->middleware('auth:api');
