@@ -24,6 +24,9 @@
             <li class="{{ isActiveRoute('minor') }}">
                 <a href="{{ url('/minor') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Minor view</span> </a>
             </li>
+            <li class="{{ isActiveRoute('planillas') }}">
+                <a href="{{ url('/planillas') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Planillas</span> </a>
+            </li>
         </ul>
 
     </div>

@@ -11,11 +11,8 @@
 |
 */
 
+
 Route::get('/', 'HomeController@index')->name("main");
-Route::get('/minor', 'HomeController@minor')->name("minor");
-
 Auth::routes();
-
-Route::get('/home', 'HomeController@index');
-
-Route::get('/planillas', 'PlanillasController@index');
+Route::get('/minor', 'HomeController@minor')->name("minor");
+Route::get('/planillas', 'PlanillasController@index')->name("planillas");
