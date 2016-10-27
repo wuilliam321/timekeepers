@@ -18,9 +18,9 @@
                 <th>Cuenta de costo</th>
                 <th>Beneficio</th>
                 <th>Cuenta de beneficio</th>
-                <th>Dia 1</th>
-                <th>Dia 2</th>
-                <th>Dia 3</th>
+                <th v-for="hora in getUltimasFechas()">
+                    {{ hora | date_format('MMM-DD') }}
+                </th>
             </tr>
             </thead>
 
@@ -46,19 +46,9 @@
                     {{ hora.nombre_cuenta_beneficio}}
                 </td>
 
-                <!-- Dia 1 -->
-                <td style="vertical-align: middle;">
-
-                </td>
-
-                <!-- Dia 2 -->
-                <td style="vertical-align: middle;">
-
-                </td>
-
-                <!-- Dia 3 -->
-                <td style="vertical-align: middle;">
-
+                <!-- Dias -->
+                <td style="vertical-align: middle;" v-for="ultima_hora in hora.ultimas_horas">
+                    {{ ultima_hora.horas_laboradas }}
                 </td>
             </tr>
             </tbody>
@@ -98,6 +88,12 @@
              */
             prepareComponent() {
             },
+
+            getUltimasFechas() {
+                return _.map(_.range(3, 0), function(day) {
+                    return moment().subtract(day - 1, 'days');
+                });
+            }
         },
 
         filters: {

@@ -15,9 +15,8 @@
             <thead>
                 <tr>
                     <th></th>
-                    <!-- TODO: Aqui deben estar los ultimos tres dias junto con sus valores -->
-                    <th v-for="hora in horas_entrada">
-                        {{ hora.fecha_entrada | date_format('MMM-DD') }}
+                    <th v-for="fecha in getUltimasFechas()">
+                        {{ fecha | date_format('MMM-DD') }}
                     </th>
                 </tr>
             </thead>
@@ -30,6 +29,7 @@
                 </td>
 
                 <!-- Name -->
+                <!-- TODO: Aqui deben estar los ultimos tres dias junto con sus valores -->
                 <td style="vertical-align: middle;" v-for="hora in horas_entrada">
                     {{ hora.fecha_entrada | date_format('HH:mm') }}
                 </td>
@@ -72,8 +72,10 @@
             prepareComponent() {
             },
 
-            showDetails() {
-                console.log('showingDetails');
+            getUltimasFechas() {
+                return _.map(_.range(3, 0), function(day) {
+                    return moment().subtract(day - 1, 'days');
+                });
             }
         },
 

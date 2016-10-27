@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\HorasLaborada;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 
 class HorasLaboradasController extends Controller
@@ -15,6 +14,18 @@ class HorasLaboradasController extends Controller
     public function getHorasLaboradasByColaboradorId($id)
     {
         $horasLaboradasModel = new HorasLaborada();
-        return $horasLaboradasModel->getByColaboradorId($id);
+        $horasLaboradas = $horasLaboradasModel->getByColaboradorId($id);
+//        return $horasLaboradas;
+        return $this->mapUltimasHorasToHorasLaboradas($horasLaboradas);
+    }
+
+    public function mapUltimasHorasToHorasLaboradas($horasLaboradas)
+    {
+        foreach ($horasLaboradas as $horasLaborada) {
+            $horasLaboradasDetallesController = new HorasLaboradasDetallesController();
+            $horasLaborada->ultimas_horas = $horasLaboradasDetallesController->getUltimasHorasByHorasLaboradaId($horasLaborada->id, 3);
+        }
+
+        return $horasLaboradas;
     }
 }
