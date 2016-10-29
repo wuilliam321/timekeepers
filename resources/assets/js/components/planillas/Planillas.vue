@@ -41,8 +41,9 @@
                         <template v-for="planilla in planillas">
                             <tr @click="togglePlanillaView" v-bind:data-id="planilla.colaborador_id">
                                 <!-- Action -->
-                                <td style="vertical-align: middle;">
-                                    +
+                                <td class="display-button" style="vertical-align: middle;">
+                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                    <i class="fa fa-angle-down hidden" aria-hidden="true"></i>
                                 </td>
 
                                 <!-- Name -->
@@ -140,6 +141,7 @@
                 $element.next().toggleClass('hidden');
 
                 if (!$element.hasClass('hidden')) {
+                    $element.find('i').toggleClass('hidden');
                     this.getHorasEntrada($element.data('id'));
                     this.getHorasLaboradas($element.data('id'));
                 }

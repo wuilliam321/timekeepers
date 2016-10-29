@@ -23,11 +23,8 @@ elixir(mix => {
         'resources/assets/vendor/font-awesome/css/font-awesome.css',
     ], 'public/css/vendor.css', './');
     mix.webpack([
-        // '../vendor/jquery/jquery-2.1.1.js',
-        //'../vendor/bootstrap/js/bootstrap.js',
         'app.js',
         '../vendor/metisMenu/jquery.metisMenu.js',
-        '../vendor/slimscroll/jquery.slimscroll.min.js',
         '../vendor/pace/pace.min.js',
     ], 'public/js/app.js');
 
