@@ -21,10 +21,14 @@ elixir(mix => {
         'resources/assets/vendor/bootstrap/css/bootstrap.css',
         'resources/assets/vendor/animate/animate.css',
         'resources/assets/vendor/font-awesome/css/font-awesome.css',
+        'resources/assets/vendor/jqGrid/css/ui.jqgrid.css',
+        'resources/assets/vendor/jqGrid/css/ui.jqgrid-bootstrap.css',
+        'resources/assets/vendor/jqGrid/css/ui.jqgrid-bootstrap-ui.css',
     ], 'public/css/vendor.css', './');
     mix.webpack([
         'app.js',
         '../vendor/metisMenu/jquery.metisMenu.js',
+        '../vendor/jqGrid/src/jquery.jqGrid.js',
         '../vendor/pace/pace.min.js',
     ], 'public/js/app.js');
 
