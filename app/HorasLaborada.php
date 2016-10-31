@@ -15,13 +15,11 @@ class HorasLaborada extends Model
 
     public function getByColaboradorId($id)
     {
-        return $this->join('proyectos', 'proyectos.id', '=', $this->table . '.colaborador_id')
-            ->join('cuentas_costos', 'cuentas_costos.id', '=', $this->table . '.cuenta_costo_id')
+        return $this->join('cuentas_costos', 'cuentas_costos.id', '=', $this->table . '.cuenta_costo_id')
             ->join('beneficios', 'beneficios.id', '=', $this->table . '.beneficio_id')
             ->join('cuentas_beneficios', 'cuentas_beneficios.id', '=', $this->table . '.cuenta_beneficio_id')
             ->select(
                 $this->table. '.*',
-                'proyectos.nombre as nombre_proyecto',
                 'cuentas_costos.nombre as nombre_cuenta_costo',
                 'beneficios.nombre as nombre_beneficio',
                 'cuentas_beneficios.nombre as nombre_cuenta_beneficio')

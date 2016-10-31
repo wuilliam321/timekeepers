@@ -21,11 +21,6 @@ class CreateHorasLaboradasTable extends Migration
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
-            $table->integer('proyecto_id')->unsigned();
-            $table->foreign('proyecto_id')->references('id')->on('proyectos')
-                ->onDelete('cascade')
-                ->onUpdate('cascade');
-
             $table->integer('planilla_id')->unsigned();
             $table->foreign('planilla_id')->references('id')->on('planillas')
                 ->onDelete('cascade')
@@ -59,7 +54,6 @@ class CreateHorasLaboradasTable extends Migration
     {
         Schema::drop('horas_laboradas', function (Blueprint $table) {
             $table->dropForeign(['colaborador_id']);
-            $table->dropForeign(['proyecto_id']);
             $table->dropForeign(['planilla_id']);
             $table->dropForeign(['cuenta_costo_id']);
             $table->dropForeign(['beneficio_id']);

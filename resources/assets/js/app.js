@@ -187,5 +187,3 @@ function SmoothlyMenu() {
         $('#side-menu').removeAttr('style');
     }
 }
-
-$('table').jqGrid();

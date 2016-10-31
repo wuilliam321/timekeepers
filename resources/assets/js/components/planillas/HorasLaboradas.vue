@@ -14,7 +14,6 @@
         <table class="table table-borderless m-b-none">
             <thead>
             <tr>
-                <th>Proyecto</th>
                 <th>Cuenta de costo</th>
                 <th>Beneficio</th>
                 <th>Cuenta de beneficio</th>
@@ -26,11 +25,6 @@
 
             <tbody>
             <tr v-for="hora in horas_laboradas">
-                <!-- Proyecto -->
-                <td style="vertical-align: middle;">
-                    {{ hora.nombre_proyecto}}
-                </td>
-
                 <!-- Cuenta de Costo -->
                 <td style="vertical-align: middle;">
                     {{ hora.nombre_cuenta_costo}}

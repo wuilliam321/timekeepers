@@ -74,7 +74,6 @@ $factory->define(App\Beneficio::class, function (Faker\Generator $faker) {
 $factory->define(App\HorasLaborada::class, function (Faker\Generator $faker) {
     return [
         'colaborador_id' => $faker->numberBetween(1, 10),
-        'proyecto_id' => $faker->numberBetween(1, 10),
         'planilla_id' => $faker->numberBetween(1, 30),
         'cuenta_costo_id' => $faker->numberBetween(1, 50),
         'beneficio_id' => $faker->numberBetween(1, 40),
