@@ -23,5 +23,8 @@ Route::get('/planillas', 'PlanillasController@getPlanillas')
 Route::get('/horas_entrada/{id}', 'HorasEntradasController@getHorasEntradasByColaboradorId')
     ->middleware('auth:api');
 
+Route::post('/horas_entrada/{id}', 'HorasEntradasController@saveByColaboradorId')
+    ->middleware('auth:api');
+
 Route::get('/horas_laboradas/{id}', 'HorasLaboradasController@getHorasLaboradasByColaboradorId')
     ->middleware('auth:api');

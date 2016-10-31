@@ -75,7 +75,7 @@
                                 <td colspan="6">
                                     <div class="panel panel-default">
                                         <div class="panel-body">
-                                            <horas-entrada v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
+                                            <horas-entrada v-bind:colaborador_id="planilla.colaborador_id" v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
                                             <horas-laboradas v-bind:horas_laboradas="horas_laboradas[planilla.colaborador_id]"></horas-laboradas>
                                         </div>
                                     </div>

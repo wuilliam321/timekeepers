@@ -40,4 +40,22 @@ class HorasEntradasController extends Controller
 
         return array_reverse($fechas);
     }
+
+    public function saveByColaboradorId($id, Request $request)
+    {
+        foreach($request->horas_entrada as $hora_entrada) {
+            if ($hora_entrada['hora_entrada']) {
+                $horaEntrada = new HorasEntrada;
+                if (array_key_exists('id', $hora_entrada)) {
+                    $horaEntrada = $horaEntrada->getById($hora_entrada['id']);
+                    $horaEntrada->hora_entrada = $hora_entrada['hora_entrada'];
+                } else {
+                    $horaEntrada->fecha_entrada = $hora_entrada['fecha_entrada'];
+                    $horaEntrada->colaborador_id = $id;
+                }
+                $horaEntrada->hora_entrada = $hora_entrada['hora_entrada'];
+                $horaEntrada->save();
+            }
+        };
+    }
 }

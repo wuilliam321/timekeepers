@@ -31,11 +31,13 @@
                 <!-- Name -->
                 <!-- TODO: Aqui deben estar los ultimos tres dias junto con sus valores -->
                 <td style="vertical-align: middle;" v-for="hora in horas_entrada">
-                    {{ hora.hora_entrada | date_format('HH:mm') }}
+                    <input v-bind:id="'horas[' + hora.id + '].id'" v-model="hora.id" type="hidden" v-if="hora.id">
+                    <input v-bind:id="'horas[' + hora.id + '].hora_entrada'"  v-model="hora.hora_entrada" class="form-control text-center">
                 </td>
             </tr>
             </tbody>
         </table>
+        <button v-on:click="saveHoras">Save</button>
     </div>
 </template>
 
@@ -46,10 +48,11 @@
          */
         data() {
             return {
+                dataForSave: []
             };
         },
 
-        props: ['horas_entrada'],
+        props: ['horas_entrada', 'colaborador_id'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -76,6 +79,15 @@
                 return _.map(_.range(3, 0), function(day) {
                     return moment().subtract(day - 1, 'days');
                 });
+            },
+
+            saveHoras: function (event) {
+                event.preventDefault();
+                this.$http.post('/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
+                    console.log('ok', response);
+                }, (response) => {
+                    console.log(error, response);
+                })
             }
         },
 

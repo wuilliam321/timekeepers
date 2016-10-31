@@ -13,6 +13,11 @@ class HorasEntrada extends Model
      */
     protected $table = 'horas_entrada';
 
+    public function getById($id)
+    {
+        return $this->findOrFail($id);
+    }
+
     public function getByColaboradorId($id)
     {
         return $this->where('colaborador_id', '=', $id)
