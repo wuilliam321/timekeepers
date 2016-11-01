@@ -15,17 +15,19 @@ require('laravel-elixir-vue-2');
 
 elixir(mix => {
     mix.sass('app.scss');
-    mix.copy('resources/assets/vendor/bootstrap/fonts', 'public/fonts');
+    mix.copy('resources/assets/vendor/bootstrap/fonts', 'public/fonts/bootstrap');
     mix.copy('resources/assets/vendor/font-awesome/fonts', 'public/fonts');
     mix.styles([
         'resources/assets/vendor/bootstrap/css/bootstrap.css',
         'resources/assets/vendor/animate/animate.css',
         'resources/assets/vendor/font-awesome/css/font-awesome.css',
+        'bower_components/eonasdan-bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.min.css',
     ], 'public/css/vendor.css', './');
     mix.webpack([
         'app.js',
         '../vendor/metisMenu/jquery.metisMenu.js',
         '../vendor/pace/pace.min.js',
+        '../../../bower_components/eonasdan-bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js',
     ], 'public/js/app.js');
 
 });

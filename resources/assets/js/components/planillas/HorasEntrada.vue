@@ -31,8 +31,24 @@
                 <!-- Name -->
                 <!-- TODO: Aqui deben estar los ultimos tres dias junto con sus valores -->
                 <td style="vertical-align: middle;" v-for="hora in horas_entrada">
-                    <input v-bind:id="'horas[' + hora.id + '].id'" v-model="hora.id" type="hidden" v-if="hora.id">
-                    <input v-bind:id="'horas[' + hora.id + '].hora_entrada'"  v-model="hora.hora_entrada" class="form-control text-center">
+                    <input
+                            v-bind:id="'horas[' + hora.id + '].id'"
+                            v-model="hora.id"
+                            type="hidden"
+                            v-if="hora.id"
+                    />
+                    <div class='input-group time-picker'>
+                        <input
+                                type="text"
+                                v-bind:id="'horas[' + hora.id + '].hora_entrada'"
+                                v-model="hora.hora_entrada"
+                                class="form-control text-center"
+                        />
+                        <span class="input-group-addon">
+                            <span class="glyphicon glyphicon-time"></span>
+                        </span>
+                    </div>
+
                 </td>
             </tr>
             </tbody>
@@ -88,7 +104,7 @@
                 }, (response) => {
                     console.log(error, response);
                 })
-            }
+            },
         },
 
         filters: {

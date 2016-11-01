@@ -48,7 +48,6 @@ class HorasEntradasController extends Controller
                 $horaEntrada = new HorasEntrada;
                 if (array_key_exists('id', $hora_entrada)) {
                     $horaEntrada = $horaEntrada->getById($hora_entrada['id']);
-                    $horaEntrada->hora_entrada = $hora_entrada['hora_entrada'];
                 } else {
                     $horaEntrada->fecha_entrada = $hora_entrada['fecha_entrada'];
                     $horaEntrada->colaborador_id = $id;

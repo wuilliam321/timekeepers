@@ -1,0 +1,20 @@
+{
+  "name": "timekeepers",
+  "description": "A test description", 
+  "main": "",
+  "authors": [
+    "Wuilliam Lacruz <wuilliam321@gmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/wuilliam321/timekeepers",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "eonasdan-bootstrap-datetimepicker": "^4.17.43"
+  }
+}

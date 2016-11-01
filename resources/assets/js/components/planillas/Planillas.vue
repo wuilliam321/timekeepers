@@ -157,7 +157,7 @@
                 var vm = this;
                 if (colaborador_id) {
                     this.$http.get('/api/horas_entrada/' + colaborador_id).then(response => {
-                        var horas = _.clone(vm.horas_entrada);;
+                        var horas = _.clone(vm.horas_entrada);
                         horas[colaborador_id] = response.data;
                         Vue.set(vm, 'horas_entrada', horas);
                     });

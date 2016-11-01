@@ -45,6 +45,18 @@ Vue.component(
     require('./components/planillas/HorasLaboradas.vue')
 );
 
+/**
+ * Third party components
+ */
+
+//
+
+/**
+ * Custom directives
+ */
+
+//
+
 const app = new Vue({
     el: '#wrapper',
 });
