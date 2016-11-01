@@ -20,6 +20,7 @@
                 <th v-for="hora in getUltimasFechas()">
                     {{ hora | date_format('MMM-DD') }}
                 </th>
+                <th></th>
             </tr>
             </thead>
 
@@ -56,7 +57,11 @@
                     <input v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas_id'" v-model="hora.id" type="hidden">
                     <input v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas'"  v-model="ultima_hora.horas_laboradas" class="form-control text-center">
                 </td>
-                <button v-on:click="saveHorasLaboradas">Save</button>
+                <td>
+                    <button v-on:click="saveHorasLaboradas" class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                    </button>
+                </td>
             </tr>
             </tbody>
         </table>

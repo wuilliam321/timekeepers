@@ -18,6 +18,7 @@
                     <th v-for="fecha in getUltimasFechas()">
                         {{ fecha | date_format('MMM-DD') }}
                     </th>
+                    <th></th>
                 </tr>
             </thead>
 
@@ -50,10 +51,19 @@
                     </div>
 
                 </td>
+                <td>
+                    <div class="btn-group">
+                        <button v-on:click="saveHorasEntrada" class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                        </button>
+                        <button class="btn btn-default btn-sm">
+                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>
-        <button v-on:click="saveHorasEntrada">Save</button>
     </div>
 </template>
 
