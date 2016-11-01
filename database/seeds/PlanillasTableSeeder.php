@@ -11,6 +11,6 @@ class PlanillasTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Planilla::class, 30)->create();
+        factory(App\Planilla::class, 10)->create();
     }
 }
