@@ -76,7 +76,7 @@
                                     <div class="panel panel-default">
                                         <div class="panel-body">
                                             <horas-entrada v-bind:colaborador_id="planilla.colaborador_id" v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
-                                            <horas-laboradas v-bind:planilla_id="planilla.id" v-bind:cuentas_beneficios="cuentas_beneficios" v-bind:beneficios="beneficios" v-bind:cuentas_costo="cuentas_costo" v-bind:horas_laboradas="horas_laboradas[planilla.id]"></horas-laboradas>
+                                            <horas-laboradas v-bind:colaborador_id="planilla.colaborador_id" v-bind:planilla_id="planilla.id" v-bind:cuentas_beneficios="cuentas_beneficios" v-bind:beneficios="beneficios" v-bind:cuentas_costo="cuentas_costo" v-bind:horas_laboradas="horas_laboradas[planilla.id]"></horas-laboradas>
                                         </div>
                                     </div>
                                 </td>
