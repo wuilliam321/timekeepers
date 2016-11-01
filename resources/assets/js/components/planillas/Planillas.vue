@@ -128,6 +128,11 @@
              */
             prepareComponent() {
                 this.getPlanillas();
+                var vm = this;
+
+                $(document).on('horas_laboradas.update', function(e, planilla_id) {
+                    vm.getHorasLaboradas(planilla_id);
+                });
             },
 
             /**

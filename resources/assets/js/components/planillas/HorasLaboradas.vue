@@ -165,7 +165,6 @@
 
             saveHorasLaboradas: function (event) {
                 event.preventDefault();
-                console.log(this.new_detalles.length, this.new_horas_laboradas.cuenta_costo_id, this.new_horas_laboradas.beneficio_id, this.new_horas_laboradas.cuenta_beneficio_id)
                 if (this.new_detalles.length
                         && this.new_horas_laboradas.cuenta_costo_id
                         && this.new_horas_laboradas.beneficio_id
@@ -176,11 +175,11 @@
                     this.horas_laboradas.push(this.new_horas_laboradas);
                 }
                 this.$http.post('/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: this.horas_laboradas}).then(response => {
-                    console.log('ok', response);
-
                     // Cleaning the new element
                     this.new_horas_laboradas = initializeNewHorasLaboradas();
                     this.new_detalles = initializeNewDetalles();
+
+                    $(document).trigger('horas_laboradas.update', this.planilla_id);
                 }, (response) => {
                     console.log(error, response);
                 })
