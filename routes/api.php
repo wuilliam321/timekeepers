@@ -26,5 +26,17 @@ Route::get('/horas_entrada/{id}', 'HorasEntradasController@getHorasEntradasByCol
 Route::post('/horas_entrada/{id}', 'HorasEntradasController@saveByColaboradorId')
     ->middleware('auth:api');
 
-Route::get('/horas_laboradas/{id}', 'HorasLaboradasController@getHorasLaboradasByColaboradorId')
+Route::get('/horas_laboradas/{planilla_id}', 'HorasLaboradasController@getHorasLaboradasByPlanillaId')
+    ->middleware('auth:api');
+
+Route::post('/horas_laboradas/{id}', 'HorasLaboradasController@saveByColaboradorId')
+    ->middleware('auth:api');
+
+Route::get('/cuentas_costo', 'CuentasCostoController@getAllCuentas')
+    ->middleware('auth:api');
+
+Route::get('/beneficios', 'BeneficiosController@getAllBeneficios')
+    ->middleware('auth:api');
+
+Route::get('/cuentas_beneficios', 'CuentasBeneficiosController@getAllCuentas')
     ->middleware('auth:api');

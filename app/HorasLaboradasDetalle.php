@@ -13,6 +13,11 @@ class HorasLaboradasDetalle extends Model
      */
     protected $table = 'horas_laboradas_detalles';
 
+    public function getById($id)
+    {
+        return $this->findOrFail($id);
+    }
+
     public function getUltimasByHorasLaboradaId($id, $from, $to)
     {
         return $this->where('horas_laboradas_id', '=', $id)

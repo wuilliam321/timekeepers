@@ -37,7 +37,7 @@
             </tr>
             </tbody>
         </table>
-        <button v-on:click="saveHoras">Save</button>
+        <button v-on:click="saveHorasEntrada">Save</button>
     </div>
 </template>
 
@@ -81,7 +81,7 @@
                 });
             },
 
-            saveHoras: function (event) {
+            saveHorasEntrada: function (event) {
                 event.preventDefault();
                 this.$http.post('/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
                     console.log('ok', response);

@@ -13,17 +13,14 @@ class HorasLaborada extends Model
      */
     protected $table = 'horas_laboradas';
 
-    public function getByColaboradorId($id)
+    public function getById($id)
     {
-        return $this->join('cuentas_costos', 'cuentas_costos.id', '=', $this->table . '.cuenta_costo_id')
-            ->join('beneficios', 'beneficios.id', '=', $this->table . '.beneficio_id')
-            ->join('cuentas_beneficios', 'cuentas_beneficios.id', '=', $this->table . '.cuenta_beneficio_id')
-            ->select(
-                $this->table. '.*',
-                'cuentas_costos.nombre as nombre_cuenta_costo',
-                'beneficios.nombre as nombre_beneficio',
-                'cuentas_beneficios.nombre as nombre_cuenta_beneficio')
-            ->where($this->table . '.colaborador_id', '=', $id)
+        return $this->findOrFail($id);
+    }
+
+    public function getByPlanillaId($planilla_id)
+    {
+        return $this->where($this->table . '.planilla_id', '=', $planilla_id)
             ->get();
     }
 }

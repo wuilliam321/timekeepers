@@ -39,7 +39,7 @@
 
                     <tbody>
                         <template v-for="planilla in planillas">
-                            <tr @click="togglePlanillaView" v-bind:data-id="planilla.colaborador_id">
+                            <tr @click="togglePlanillaView" v-bind:data-colaborador-id="planilla.colaborador_id" v-bind:data-planilla-id="planilla.id">
                                 <!-- Action -->
                                 <td class="display-button" style="vertical-align: middle;">
                                     <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -76,7 +76,7 @@
                                     <div class="panel panel-default">
                                         <div class="panel-body">
                                             <horas-entrada v-bind:colaborador_id="planilla.colaborador_id" v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
-                                            <horas-laboradas v-bind:horas_laboradas="horas_laboradas[planilla.colaborador_id]"></horas-laboradas>
+                                            <horas-laboradas v-bind:planilla_id="planilla.id" v-bind:cuentas_beneficios="cuentas_beneficios" v-bind:beneficios="beneficios" v-bind:cuentas_costo="cuentas_costo" v-bind:horas_laboradas="horas_laboradas[planilla.id]"></horas-laboradas>
                                         </div>
                                     </div>
                                 </td>
@@ -102,6 +102,9 @@
                 planillas: [],
                 horas_entrada: {},
                 horas_laboradas: {},
+                cuentas_costo: [],
+                beneficios: [],
+                cuentas_beneficios: [],
             };
         },
 
@@ -139,11 +142,14 @@
             togglePlanillaView(event) {
                 var $element = $(event.currentTarget);
                 $element.next().toggleClass('hidden');
+                $element.find('i').toggleClass('hidden');
 
-                if (!$element.hasClass('hidden')) {
-                    $element.find('i').toggleClass('hidden');
-                    this.getHorasEntrada($element.data('id'));
-                    this.getHorasLaboradas($element.data('id'));
+                if (!$element.next().hasClass('hidden')) {
+                    this.getHorasEntrada($element.data('colaborador-id'));
+                    this.getHorasLaboradas($element.data('planilla-id'));
+                    this.getCuentasCosto();
+                    this.getBeneficios();
+                    this.getCuentasBeneficios();
                 }
             },
 
@@ -158,13 +164,40 @@
                 }
             },
 
-            getHorasLaboradas(colaborador_id) {
+            getHorasLaboradas(planilla_id) {
                 var vm = this;
-                if (colaborador_id) {
-                    this.$http.get('/api/horas_laboradas/' + colaborador_id).then(response => {
-                        var horas = _.clone(vm.horas_laboradas);;
-                        horas[colaborador_id] = response.data;
+                if (planilla_id) {
+                    this.$http.get('/api/horas_laboradas/' + planilla_id).then(response => {
+                        var horas = _.clone(vm.horas_laboradas);
+                        horas[planilla_id] = response.data;
                         Vue.set(vm, 'horas_laboradas', horas);
+                    });
+                }
+            },
+
+            getCuentasCosto() {
+                if (!this.cuentas_costo.length) {
+                    var vm = this;
+                    this.$http.get('/api/cuentas_costo').then(response => {
+                        Vue.set(vm, 'cuentas_costo', response.data);
+                    });
+                }
+            },
+
+            getBeneficios() {
+                if (!this.beneficios.length) {
+                    var vm = this;
+                    this.$http.get('/api/beneficios').then(response => {
+                        Vue.set(vm, 'beneficios', response.data);
+                    });
+                }
+            },
+
+            getCuentasBeneficios() {
+                if (!this.cuentas_beneficios.length) {
+                    var vm = this;
+                    this.$http.get('/api/cuentas_beneficios').then(response => {
+                        Vue.set(vm, 'cuentas_beneficios', response.data);
                     });
                 }
             },
