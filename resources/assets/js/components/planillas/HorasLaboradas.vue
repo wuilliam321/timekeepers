@@ -58,6 +58,11 @@
                     <input v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas_id'" v-model="hora.id" type="hidden">
                     <input v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas'"  v-model="ultima_hora.horas_laboradas" class="form-control text-center">
                 </td>
+                <td style="vertical-align: middle;">
+                    <button class="btn btn-default btn-sm">
+                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                    </button>
+                </td>
             </tr>
             <tr>
                 <!-- Cuenta de Costo -->
@@ -89,9 +94,10 @@
                     <input v-bind:id="'new_detalles[' + index + '].fecha_laborada'" v-model="new_detalles[index].fecha_laborada" type="hidden">
                     <input v-bind:id="'new_detalles[' + index + '].horas_laboradas'"  v-model="new_detalles[index].horas_laboradas" class="form-control text-center">
                 </td>
+                <td style="vertical-align: middle;"></td>
             </tr>
             <tr>
-                <td colspan="6" class="text-right">
+                <td colspan="7" class="text-right">
                     <button v-on:click="saveHorasLaboradas" class="btn btn-default">
                         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                         Save

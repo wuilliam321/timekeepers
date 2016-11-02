@@ -38,7 +38,7 @@
                             type="hidden"
                             v-if="hora.id"
                     />
-                    <div class='input-group time-picker'>
+                    <div class='input-group'>
                         <input
                                 type="text"
                                 v-bind:id="'horas[' + hora.id + '].hora_entrada'"

@@ -49,7 +49,7 @@ $factory->define(App\HorasEntrada::class, function (Faker\Generator $faker) {
     return [
         'colaborador_id' => $faker->numberBetween(1,10),
         'fecha_entrada' => $date,
-        'hora_entrada' => $date,
+        'hora_entrada' => $faker->numberBetween(0, 23) . ':' . $faker->numberBetween(0,60),
     ];
 });
 

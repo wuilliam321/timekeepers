@@ -16,7 +16,7 @@ class CreateHorasEntradaTable extends Migration
         Schema::create('horas_entrada', function (Blueprint $table) {
             $table->increments('id');
             $table->date('fecha_entrada');
-            $table->dateTime('hora_entrada');
+            $table->text('hora_entrada', 5);
             $table->integer('colaborador_id')->unsigned();
             $table->foreign('colaborador_id')->references('id')->on('colaboradores')
                 ->onDelete('cascade')
