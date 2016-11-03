@@ -1,4 +1,17 @@
 <style scoped>
+    .glyphicon-sort-by-alphabet,
+    .glyphicon-sort-by-alphabet-alt {
+        display: none;
+    }
+    .active .glyphicon-sort {
+        display: none;
+    }
+    .active.up .glyphicon-sort-by-alphabet {
+        display: block;
+    }
+    .active.down .glyphicon-sort-by-alphabet-alt {
+        display: block;
+    }
     .action-link {
         cursor: pointer;
     }
@@ -24,11 +37,47 @@
                     <thead>
                     <tr>
                         <th></th>
-                        <th v-on:click="sortBy('colaborador.nombre')">Colaborador</th>
-                        <th v-on:click="sortBy('cedula')">Cedula</th>
-                        <th v-on:click="sortBy('proyecto.nombre')">Proyecto</th>
-                        <th v-on:click="sortBy('planilla.codigo')">Planilla</th>
-                        <th v-on:click="sortBy('tipo_salario')">Tipo Salario</th>
+                        <th
+                                v-on:click="sortBy('nombre_colaborador')"
+                                v-bind:class="{active: sortKey == 'nombre_colaborador', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                            Colaborador
+                            <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
+
+                        </th>
+                        <th
+                                v-on:click="sortBy('cedula')"
+                                v-bind:class="{active: sortKey == 'cedula', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                            Cedula
+                            <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
+                        </th>
+                        <th
+                                v-on:click="sortBy('nombre_proyecto')"
+                                v-bind:class="{active: sortKey == 'nombre_proyecto', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                            Proyecto
+                            <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
+                        </th>
+                        <th
+                                v-on:click="sortBy('codigo_planilla')"
+                                v-bind:class="{active: sortKey == 'codigo_planilla', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                            Planilla
+                            <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
+                        </th>
+                        <th
+                                v-on:click="sortBy('tipo_salario')"
+                                v-bind:class="{active: sortKey == 'tipo_salario', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                            Tipo Salario
+                            <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
+                            <span class="pull-right glyphicon glyphicon-sort-by-alphabet-alt" aria-hidden="true"></span>
+                        </th>
                     </tr>
                     </thead>
 
@@ -132,11 +181,12 @@
                 beneficios: [],
                 cuentas_beneficios: [],
                 default_paginate_options: {
-                    filter: 'id',
+                    sort_key: 'id',
                 },
                 currentPage: 1,
                 total: 0,
-                sortKey: '',
+                sortKey: 'id',
+                sortDirection: 'asc',
                 next_url: '',
                 prev_url: '',
             };
@@ -258,10 +308,22 @@
             },
 
             sortBy(key) {
+//                this.closeAllToggled();
+                this.checkSortDirection(key);
                 this.sortKey = key;
-                console.log('going to sort by', this.sortKey);
                 this.default_paginate_options.sort_key = this.sortKey;
-                this.getPlanillas();
+                var params = $.param(this.default_paginate_options);
+                var url = '/api/planillas?' + params +  '&page=' + this.currentPage;
+                this.runGetPlanillasRequest(url);
+            },
+
+            checkSortDirection(key) {
+                if (this.sortKey == key) {
+                    this.sortDirection = (this.sortDirection === 'asc') ? 'desc' : 'asc';
+                } else {
+                    this.sortDirection = 'asc'
+                }
+                this.default_paginate_options.sort_direction = this.sortDirection;
             },
 
             startPage() {
