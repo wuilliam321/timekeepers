@@ -36,14 +36,6 @@ Vue.component(
     'planillas-index',
     require('./components/planillas/Planillas.vue')
 );
-Vue.component(
-    'planillas-hora-entrada',
-    require('./components/planillas/HorasEntrada.vue')
-);
-Vue.component(
-    'planillas-tiempo-trabajado',
-    require('./components/planillas/HorasLaboradas.vue')
-);
 
 /**
  * Third party components
