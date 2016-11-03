@@ -309,6 +309,7 @@
 
             sortBy(key) {
 //                this.closeAllToggled();
+                $('.horas-container').addClass('hidden');
                 this.checkSortDirection(key);
                 this.sortKey = key;
                 this.default_paginate_options.sort_key = this.sortKey;

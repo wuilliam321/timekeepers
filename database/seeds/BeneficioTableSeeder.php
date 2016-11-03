@@ -11,6 +11,40 @@ class BeneficioTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\Beneficio::class, 40)->create();
+        $rows = [
+            [
+                'id' => 1,
+                'nombre' => 'Alturas',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 2,
+                'nombre' => 'Equipo pesado',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 3,
+                'nombre' => 'Lluvia',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 4,
+                'nombre' => 'Vibración',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ],
+            [
+                'id' => 5,
+                'nombre' => 'Sótanos',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s'),
+            ]
+        ];
+        foreach ($rows as $row) {
+            \App\Beneficio::insert($row);
+        }
     }
 }
