@@ -13,8 +13,13 @@ class Planilla extends Model
      */
     protected $table = 'planillas';
 
-    public function getWithColaboradoresAndProyectos()
+    public function getWithColaboradoresAndProyectos($paginate_options)
     {
+        if ($paginate_options && array_key_exists('page', $paginate_options)) {
+            $page = $paginate_options['page'];
+        } else {
+            $page = 1;
+        }
         return $this
             ->join('colaboradores', 'colaboradores.id', '=', $this->table . '.colaborador_id')
             ->join('proyectos', 'proyectos.id', '=', $this->table . '.proyecto_id')
@@ -24,6 +29,6 @@ class Planilla extends Model
                 'colaboradores.cedula',
                 'colaboradores.tipo_salario',
                 'proyectos.nombre as nombre_proyecto')
-            ->get();
+            ->paginate(10, ['*'], 'page', $page);;
     }
 }

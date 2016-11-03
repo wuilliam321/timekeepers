@@ -28,8 +28,9 @@ class PlanillasController extends Controller
     }
 
     public function getPlanillas() {
+        $paginate_options = $_GET;
         $planillaModel = new Planilla();
-        return $planillaModel->getWithColaboradoresAndProyectos();
+        return $planillaModel->getWithColaboradoresAndProyectos($paginate_options);
 
     }
 }

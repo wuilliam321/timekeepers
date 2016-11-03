@@ -20,27 +20,24 @@
             </div>
 
             <div class="panel-body">
-                <!-- Current Planillas -->
-                <p class="m-b-none" v-if="planillas.length === 0">
-                    You have not created any planillas.
-                </p>
-
                 <table class="table table-borderless m-b-none" v-if="planillas.length > 0">
                     <thead>
                     <tr>
                         <th></th>
-                        <th>Colaborador</th>
-                        <th>Cedula</th>
-                        <th>Proyecto</th>
-                        <th>Planilla</th>
-                        <th>Tipo Salario</th>
+                        <th v-on:click="sortBy('colaborador.nombre')">Colaborador</th>
+                        <th v-on:click="sortBy('cedula')">Cedula</th>
+                        <th v-on:click="sortBy('proyecto.nombre')">Proyecto</th>
+                        <th v-on:click="sortBy('planilla.codigo')">Planilla</th>
+                        <th v-on:click="sortBy('tipo_salario')">Tipo Salario</th>
                     </tr>
                     </thead>
 
                     <tbody>
                     <template v-for="planilla in planillas">
-                        <tr @click="togglePlanillaView" v-bind:data-colaborador-id="planilla.colaborador_id"
-                            v-bind:data-planilla-id="planilla.id">
+                        <tr
+                                @click="togglePlanillaView"
+                                v-bind:data-colaborador-id="planilla.colaborador_id"
+                                v-bind:data-planilla-id="planilla.id">
                             <!-- Action -->
                             <td class="display-button" style="vertical-align: middle;">
                                 <i class="fa fa-angle-right" aria-hidden="true"></i>
@@ -91,6 +88,27 @@
                     </template>
                     </tbody>
                 </table>
+                <nav aria-label="Page navigation" class="text-center">
+                    <ul class="pagination">
+                        <li>
+                            <a href="#" v-on:click.prevent="startPage">&laquo;&laquo;</a>
+                        </li>
+                        <li>
+                            <a href="#" v-on:click.prevent="prevPage" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </a>
+                        </li>
+                        <li v-bind:class="{ active: page === currentPage }" v-on:click="viewPage(page)" v-for="page in total"><a v-on:click.prevent href="#">{{page}}</a></li>
+                        <li>
+                            <a href="#" v-on:click.prevent="nextPage" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" v-on:click.prevent="lastPage">&raquo;&raquo;</a>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
     </div>
@@ -106,12 +124,21 @@
          */
         data() {
             return {
+                REMOVE_HOST_REGEXP: /^[a-z]{4}\:\/{2}[a-z]{1,}\:[0-9]{1,4}.(.*)/,
                 planillas: [],
                 horas_entrada: {},
                 horas_laboradas: {},
                 cuentas_costo: [],
                 beneficios: [],
                 cuentas_beneficios: [],
+                default_paginate_options: {
+                    filter: 'id',
+                },
+                currentPage: 1,
+                total: 0,
+                sortKey: '',
+                next_url: '',
+                prev_url: '',
             };
         },
 
@@ -146,8 +173,19 @@
              * Get all of the planillas for the user.
              */
             getPlanillas() {
-                this.$http.get('/api/planillas').then(response => {
-                    this.planillas = response.data;
+                var params = $.param(this.default_paginate_options);
+                var url = '/api/planillas?' + params;
+                this.runGetPlanillasRequest(url);
+            },
+
+
+            runGetPlanillasRequest(url) {
+                this.$http.get(url).then(response => {
+                    this.last_page = response.body.last_page;
+                    this.total = this.last_page;
+                    this.planillas = response.body.data;
+                    this.next_url = (response.body.next_page_url) ? '/' + response.body.next_page_url.replace(this.REMOVE_HOST_REGEXP, '$1') : null;
+                    this.prev_url = (response.body.prev_page_url) ? '/' + response.body.prev_page_url.replace(this.REMOVE_HOST_REGEXP, '$1'): null;
                 });
             },
 
@@ -218,6 +256,50 @@
                     });
                 }
             },
+
+            sortBy(key) {
+                this.sortKey = key;
+                console.log('going to sort by', this.sortKey);
+                this.default_paginate_options.sort_key = this.sortKey;
+                this.getPlanillas();
+            },
+
+            startPage() {
+                this.currentPage = 1;
+                this.getPlanillas();
+            },
+
+            lastPage() {
+                this.currentPage = this.last_page;
+                var params = $.param(this.default_paginate_options) + '&page=' + this.last_page;
+                var url = '/api/planillas?' + params;
+                this.runGetPlanillasRequest(url);
+            },
+
+            viewPage(page) {
+                this.currentPage = page;
+                var params = $.param(this.default_paginate_options) + '&page=' + page;
+                var url = '/api/planillas?' + params;
+                this.runGetPlanillasRequest(url);
+            },
+
+            nextPage() {
+                var params = $.param(this.default_paginate_options);
+                if (this.next_url) {
+                    this.currentPage++;
+                    var url = this.next_url + '&' + params;
+                    this.runGetPlanillasRequest(url);
+                }
+            },
+
+            prevPage() {
+                var params = $.param(this.default_paginate_options);
+                if (this.prev_url) {
+                    this.currentPage--;
+                    var url = this.prev_url + '&' + params;
+                    this.runGetPlanillasRequest(url);
+                }
+            }
         },
 
         components: {
