@@ -11,6 +11,11 @@ class CuentasCostoController extends Controller
     public function getAllCuentas()
     {
         $model = new CuentasCosto();
-        return $model->all();
+        $cuentas = $model->all();
+        foreach ($cuentas as $index => $cuenta) {
+            $cuentas[$index]->nombre = $cuentas[$index]->codigo . ' ' . $cuentas[$index]->nombre;
+        }
+
+        return $cuentas;
     }
 }
