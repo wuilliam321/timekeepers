@@ -44,7 +44,7 @@ class HorasEntradasController extends Controller
     public function saveByColaboradorId($id, Request $request)
     {
         foreach($request->horas_entrada as $hora_entrada) {
-            if ($hora_entrada['hora_entrada']) {
+            if ($hora_entrada['horas'] !== '' && $hora_entrada['minutos'] !== '') {
                 $horaEntrada = new HorasEntrada;
                 if (array_key_exists('id', $hora_entrada)) {
                     $horaEntrada = $horaEntrada->getById($hora_entrada['id']);
@@ -52,9 +52,26 @@ class HorasEntradasController extends Controller
                     $horaEntrada->fecha_entrada = $hora_entrada['fecha_entrada'];
                     $horaEntrada->colaborador_id = $id;
                 }
-                $horaEntrada->hora_entrada = $hora_entrada['hora_entrada'];
+                echo $this->getFixedHoras($hora_entrada);
+                $horaEntrada->hora_entrada = $this->getFixedHoras($hora_entrada);
                 $horaEntrada->save();
             }
-        };
+        }
+    }
+
+    public function getFixedHoras($hora_entrada)
+    {
+        $horas = intval($hora_entrada['horas']);
+        $minutos = intval($hora_entrada['minutos']);
+
+        if ($horas < 10) {
+            $horas = '0' . $horas;
+        }
+
+        if ($minutos < 10) {
+            $minutos = '0' . $minutos;
+        }
+
+        return $horas . ':' . $minutos;
     }
 }

@@ -27,61 +27,68 @@
 
                 <table class="table table-borderless m-b-none" v-if="planillas.length > 0">
                     <thead>
-                        <tr>
-                            <th></th>
-                            <th>Colaborador</th>
-                            <th>Cedula</th>
-                            <th>Proyecto</th>
-                            <th>Planilla</th>
-                            <th>Tipo Salario</th>
-                        </tr>
+                    <tr>
+                        <th></th>
+                        <th>Colaborador</th>
+                        <th>Cedula</th>
+                        <th>Proyecto</th>
+                        <th>Planilla</th>
+                        <th>Tipo Salario</th>
+                    </tr>
                     </thead>
 
                     <tbody>
-                        <template v-for="planilla in planillas">
-                            <tr @click="togglePlanillaView" v-bind:data-colaborador-id="planilla.colaborador_id" v-bind:data-planilla-id="planilla.id">
-                                <!-- Action -->
-                                <td class="display-button" style="vertical-align: middle;">
-                                    <i class="fa fa-angle-right" aria-hidden="true"></i>
-                                    <i class="fa fa-angle-down hidden" aria-hidden="true"></i>
-                                </td>
+                    <template v-for="planilla in planillas">
+                        <tr @click="togglePlanillaView" v-bind:data-colaborador-id="planilla.colaborador_id"
+                            v-bind:data-planilla-id="planilla.id">
+                            <!-- Action -->
+                            <td class="display-button" style="vertical-align: middle;">
+                                <i class="fa fa-angle-right" aria-hidden="true"></i>
+                                <i class="fa fa-angle-down hidden" aria-hidden="true"></i>
+                            </td>
 
-                                <!-- Name -->
-                                <td style="vertical-align: middle;">
-                                    {{ planilla.nombre_colaborador }}
-                                </td>
+                            <!-- Name -->
+                            <td style="vertical-align: middle;">
+                                {{ planilla.nombre_colaborador }}
+                            </td>
 
-                                <!-- Cedula -->
-                                <td style="vertical-align: middle;">
-                                    {{ planilla.cedula }}
-                                </td>
+                            <!-- Cedula -->
+                            <td style="vertical-align: middle;">
+                                {{ planilla.cedula }}
+                            </td>
 
-                                <!-- Proyecto -->
-                                <td style="vertical-align: middle;">
-                                    {{ planilla.nombre_proyecto }}
-                                </td>
+                            <!-- Proyecto -->
+                            <td style="vertical-align: middle;">
+                                {{ planilla.nombre_proyecto }}
+                            </td>
 
-                                <!-- Codigo -->
-                                <td style="vertical-align: middle;">
-                                    {{ planilla.codigo }}
-                                </td>
+                            <!-- Codigo -->
+                            <td style="vertical-align: middle;">
+                                {{ planilla.codigo }}
+                            </td>
 
-                                <!-- Tipo Salario -->
-                                <td style="vertical-align: middle;">
-                                    {{ planilla.tipo_salario}}
-                                </td>
-                            </tr>
-                            <tr class="horas-container hidden">
-                                <td colspan="6">
-                                    <div class="panel panel-default">
-                                        <div class="panel-body">
-                                            <horas-entrada v-bind:colaborador_id="planilla.colaborador_id" v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
-                                            <horas-laboradas v-bind:colaborador_id="planilla.colaborador_id" v-bind:planilla_id="planilla.id" v-bind:cuentas_beneficios="cuentas_beneficios" v-bind:beneficios="beneficios" v-bind:cuentas_costo="cuentas_costo" v-bind:horas_laboradas="horas_laboradas[planilla.id]"></horas-laboradas>
-                                        </div>
+                            <!-- Tipo Salario -->
+                            <td style="vertical-align: middle;">
+                                {{ planilla.tipo_salario}}
+                            </td>
+                        </tr>
+                        <tr class="horas-container hidden">
+                            <td colspan="6">
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <horas-entrada v-bind:colaborador_id="planilla.colaborador_id"
+                                                       v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
+                                        <horas-laboradas v-bind:colaborador_id="planilla.colaborador_id"
+                                                         v-bind:planilla_id="planilla.id"
+                                                         v-bind:cuentas_beneficios="cuentas_beneficios"
+                                                         v-bind:beneficios="beneficios"
+                                                         v-bind:cuentas_costo="cuentas_costo"
+                                                         v-bind:horas_laboradas="horas_laboradas[planilla.id]"></horas-laboradas>
                                     </div>
-                                </td>
-                            </tr>
-                        </template>
+                                </div>
+                            </td>
+                        </tr>
+                    </template>
                     </tbody>
                 </table>
             </div>
@@ -130,7 +137,7 @@
                 this.getPlanillas();
                 var vm = this;
 
-                $(document).on('horas_laboradas.update', function(e, planilla_id) {
+                $(document).on('horas_laboradas.update', function (e, planilla_id) {
                     vm.getHorasLaboradas(planilla_id);
                 });
             },
@@ -164,6 +171,11 @@
                     this.$http.get('/api/horas_entrada/' + colaborador_id).then(response => {
                         var horas = _.clone(vm.horas_entrada);
                         horas[colaborador_id] = response.data;
+                        _.each(horas[colaborador_id], function (hora) {
+                            var splitted = hora.hora_entrada.split(':');
+                            hora.horas = splitted[0];
+                            hora.minutos = splitted[1];
+                        });
                         Vue.set(vm, 'horas_entrada', horas);
                     });
                 }

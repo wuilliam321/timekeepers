@@ -25,7 +25,7 @@
             <tbody>
             <tr>
                 <!-- Action -->
-                <td style="vertical-align: middle;">
+                <td style="vertical-align: middle;" class="col-xs-3">
                     Hora de entrada
                 </td>
 
@@ -40,26 +40,35 @@
                     />
                     <div class='input-group'>
                         <input
-                                type="text"
-                                v-bind:id="'horas[' + hora.id + '].hora_entrada'"
-                                v-model="hora.hora_entrada"
+                                type="number"
+                                min="0"
+                                max="23"
+                                maxlength="2"
+                                v-on:keyup="fixLeadingZero"
+                                v-on:mouseup="fixLeadingZero"
+                                v-bind:id="'horas[' + hora.id + '].horas'"
+                                v-model="hora.horas"
                                 class="form-control text-center"
                         />
-                        <span class="input-group-addon">
-                            <span class="glyphicon glyphicon-time"></span>
-                        </span>
+                        <div class="input-group-addon">:</div>
+                        <input
+                                type="number"
+                                min="0"
+                                max="59"
+                                maxlength="2"
+                                v-on:keyup="fixLeadingZero"
+                                v-on:mouseup="fixLeadingZero"
+                                v-bind:id="'horas[' + hora.id + '].minutos'"
+                                v-model="hora.minutos"
+                                class="form-control text-center"
+                        />
                     </div>
 
                 </td>
                 <td>
-                    <div class="btn-group">
-                        <button v-on:click="saveHorasEntrada" class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-                        </button>
-                        <button class="btn btn-default btn-sm">
-                            <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                        </button>
-                    </div>
+                    <button v-on:click="saveHorasEntrada" class="btn btn-default">
+                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                    </button>
                 </td>
             </tr>
             </tbody>
@@ -115,6 +124,14 @@
                     console.log(error, response);
                 })
             },
+
+            fixLeadingZero: function(event) {
+                var $element = $(event.currentTarget);
+                var value = parseInt($element.val());
+                if (value < 10) {
+                    $element.val('0' + value);
+                }
+            }
         },
 
         filters: {
