@@ -32,6 +32,9 @@ Route::get('/horas_laboradas/{planilla_id}', 'HorasLaboradasController@getHorasL
 Route::post('/horas_laboradas/{id}', 'HorasLaboradasController@saveByColaboradorId')
     ->middleware('auth:api');
 
+Route::delete('/horas_laboradas/{id}', 'HorasLaboradasController@deleteById')
+    ->middleware('auth:api');
+
 Route::get('/cuentas_costo', 'CuentasCostoController@getAllCuentas')
     ->middleware('auth:api');
 

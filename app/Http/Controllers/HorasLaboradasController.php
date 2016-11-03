@@ -59,4 +59,11 @@ class HorasLaboradasController extends Controller
             $horaDetalle->save();
         }
     }
+
+    public function deleteById($id)
+    {
+        $horasLaboradas = new HorasLaborada();
+        $horaLaborada = $horasLaboradas->getById($id);
+        $horaLaborada->delete();
+    }
 }

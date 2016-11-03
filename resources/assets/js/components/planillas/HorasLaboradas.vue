@@ -87,9 +87,7 @@
                     />
                 </td>
                 <td>
-                    <button class="btn btn-default btn-sm">
-                        <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
-                    </button>
+                    <remove-hora v-bind:planilla_id="planilla_id" v-bind:hora_id="hora.id"></remove-hora>
                 </td>
             </tr>
             <tr>
@@ -137,7 +135,7 @@
             </tr>
             <tr>
                 <td colspan="7" class="text-right">
-                    <button v-on:click="saveHorasLaboradas" class="btn btn-default">
+                    <button v-on:click="saveHorasLaboradas" class="btn btn-primary">
                         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                         Save
                     </button>
@@ -149,6 +147,7 @@
 </template>
 
 <script>
+    import RemoveHora from './RemoveHora.vue'
     function initializeNewHorasLaboradas() {
         return {
             cuenta_costo_id: '',
@@ -174,6 +173,7 @@
          */
         data() {
             return {
+                horas_indexes: 0,
                 new_horas_laboradas: initializeNewHorasLaboradas(),
                 new_detalles: initializeNewDetalles(),
             };
@@ -225,10 +225,17 @@
                     this.new_detalles = initializeNewDetalles();
 
                     $(document).trigger('horas_laboradas.update', this.planilla_id);
+                    toastr.success('Horas laboradas ingresadas correctamente','Exito!');
+                    console.log(response);
                 }, (response) => {
+                    toastr.error('Ocurrio un error al guardar horas laboradas','Error!');
                     console.log(error, response);
                 })
-            }
+            },
+        },
+
+        components: {
+            removeHora: RemoveHora
         },
 
         filters: {

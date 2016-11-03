@@ -66,7 +66,7 @@
 
                 </td>
                 <td>
-                    <button v-on:click="saveHorasEntrada" class="btn btn-default">
+                    <button v-on:click="saveHorasEntrada" class="btn btn-primary">
                         <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                     </button>
                 </td>
@@ -119,8 +119,10 @@
             saveHorasEntrada: function (event) {
                 event.preventDefault();
                 this.$http.post('/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
-                    console.log('ok', response);
+                    console.log(response);
+                    toastr.success('Horas de entrada actualizadas con correctamente','Exito!');
                 }, (response) => {
+                    toastr.error('Ocurrio un error al guardar horas de entrada','Error!');
                     console.log(error, response);
                 })
             },

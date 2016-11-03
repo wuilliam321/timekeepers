@@ -21,11 +21,13 @@ elixir(mix => {
         'resources/assets/vendor/bootstrap/css/bootstrap.css',
         'resources/assets/vendor/animate/animate.css',
         'resources/assets/vendor/font-awesome/css/font-awesome.css',
+        'node_modules/toastr/build/toastr.min.css',
     ], 'public/css/vendor.css', './');
     mix.webpack([
         'app.js',
         '../vendor/metisMenu/jquery.metisMenu.js',
         '../vendor/pace/pace.min.js',
+        '../../../node_modules/toastr/build/toastr.min.js',
     ], 'public/js/app.js');
 
 });
