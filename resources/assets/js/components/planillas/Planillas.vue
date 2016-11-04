@@ -24,14 +24,26 @@
 <template>
     <div>
         <div class="panel panel-default">
-            <div class="panel-heading">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>
-                        Planillas
-                    </span>
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-10 form-inline">
+                        <div class="form-group">
+                            <label for="planillas-filter">
+                                Planillas
+                            </label>
+                            <select id="planillas-filter" class="form-control" v-on:change="filterPlanillasByCodigo">
+                                <option value="">Todas</option>
+                                <template v-for="planilla in planillas_for_filter">
+                                    <option v-bind:value="planilla">{{planilla}}</option>
+                                </template>
+                            </select>
+                        </div>
+                    </div>
                 </div>
             </div>
+        </div>
 
+        <div class="panel panel-default">
             <div class="panel-body">
                 <table class="table table-borderless m-b-none" v-if="planillas.length > 0">
                     <thead>
@@ -178,6 +190,8 @@
             return {
                 REMOVE_HOST_REGEXP: /^[a-z]{4}\:\/{2}[a-z]{1,}\:[0-9]{1,4}.(.*)/,
                 planillas: [],
+                planillas_for_filter: [],
+                current_planilla_filter: '',
                 horas_entrada: {},
                 horas_laboradas: {},
                 cuentas_costo: [],
@@ -215,6 +229,7 @@
              */
             prepareComponent() {
                 this.getPlanillas();
+                this.getPlanillasFilter();
                 var vm = this;
 
                 $(document).on('horas_laboradas.update', function (e, planilla_id) {
@@ -364,6 +379,26 @@
                     this.currentPage--;
                     var url = this.prev_url + '&' + params;
                     this.runGetPlanillasRequest(url);
+                }
+            },
+
+            filterPlanillasByCodigo(event) {
+                var codigo = $(event.currentTarget).val();
+                this.default_paginate_options.codigo = codigo;
+                var params = $.param(this.default_paginate_options);
+                var url = '/api/planillas?' + params;
+                this.runGetPlanillasRequest(url);
+            },
+
+            getPlanillasFilter() {
+
+                if (!this.planillas_for_filter.length) {
+                    var vm = this;
+                    this.$http.get('/api/planillas/filters').then(response => {
+                        vm.planillas_for_filter = _.uniq(_.map(response.body.data, function(planilla) {
+                            return planilla.codigo;
+                        }));
+                    });
                 }
             }
         },

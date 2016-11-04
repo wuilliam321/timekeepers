@@ -33,4 +33,10 @@ class PlanillasController extends Controller
         return $planillaModel->getWithColaboradoresAndProyectos($paginate_options);
 
     }
+
+    public function getPlanillasFilters() {
+        $planillaModel = new Planilla();
+        return $planillaModel->getWithColaboradoresAndProyectos(['per_page' => 99999]);
+
+    }
 }

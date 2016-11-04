@@ -20,6 +20,9 @@ Route::get('/user', function (Request $request) {
 Route::get('/planillas', 'PlanillasController@getPlanillas')
     ->middleware('auth:api');
 
+Route::get('/planillas/filters', 'PlanillasController@getPlanillasFilters')
+    ->middleware('auth:api');
+
 Route::get('/horas_entrada/{id}', 'HorasEntradasController@getHorasEntradasByColaboradorId')
     ->middleware('auth:api');
 
