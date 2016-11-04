@@ -55,7 +55,19 @@ class HorasLaboradasController extends Controller
             }
             $horaDetalle->horas_laboradas_id = $horas_laboradas_id;
             $horaDetalle->fecha_laborada = $detalle['fecha_laborada'];
-            $horaDetalle->horas_laboradas = $detalle['horas_laboradas'];
+
+            $una_hora = 60;
+            $horas = 0;
+            $minutos = 0;
+            if ($detalle['horas']) {
+                $horas = intval($detalle['horas']);
+            }
+
+            if ($detalle['minutos']) {
+                $minutos = $detalle['minutos'];
+            }
+            $horas_laboradas = (intval($horas) * $una_hora) + intval($minutos);
+            $horaDetalle->horas_laboradas = $horas_laboradas;
             $horaDetalle->save();
         }
     }

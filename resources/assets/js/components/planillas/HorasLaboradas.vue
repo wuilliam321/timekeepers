@@ -6,6 +6,12 @@
     .m-b-none {
         margin-bottom: 0;
     }
+    .input-group-addon {
+        padding: 6px 1px;
+    }
+    .form-control {
+        padding: 6px;
+    }
 </style>
 
 <template>
@@ -14,10 +20,10 @@
         <table class="table table-borderless m-b-none">
             <thead>
             <tr>
-                <th>Cuenta de costo</th>
-                <th>Beneficio</th>
-                <th>Cuenta de beneficio</th>
-                <th v-for="hora in getUltimasFechas()" class="col-xs-1">
+                <th class="col-xs-3">Cuenta de costo</th>
+                <th class="col-xs-2">Beneficio</th>
+                <th class="col-xs-3">Cuenta de beneficio</th>
+                <th v-for="hora in getUltimasFechas()">
                     {{ hora | date_format('MMM-DD') }}
                 </th>
                 <th></th>
@@ -77,15 +83,29 @@
                     />
 
                     <!--TODO: We need to send the model to the events in order to correctly manipulate and preseve changes-->
-                    <input
-                            type="text"
-                            v-on:focusout="validateDecimal(ultima_hora)"
-                            min="0"
-                            max="24"
-                            v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas'"
-                            v-model="ultima_hora.horas_laboradas"
-                            class="form-control text-center"
-                    />
+                    <div class='input-group'>
+                        <input
+                                type="text"
+                                min="0"
+                                max="24"
+                                maxlength="2"
+                                v-on:focusout="validateHorasInteger(ultima_hora)"
+                                v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas'"
+                                v-model="ultima_hora.horas"
+                                class="form-control text-center"
+                        />
+                        <div class="input-group-addon">:</div>
+                        <input
+                                type="text"
+                                min="0"
+                                max="59"
+                                maxlength="2"
+                                v-on:focusout="validateMinutosInteger(ultima_hora)"
+                                v-bind:id="'ultima_hora[' + ultima_hora.id + '].minutos'"
+                                v-model="ultima_hora.minutos"
+                                class="form-control text-center"
+                        />
+                    </div>
                 </td>
                 <td>
                     <remove-hora v-bind:planilla_id="planilla_id" v-bind:hora_id="hora.id"></remove-hora>
@@ -123,15 +143,29 @@
                             v-model="new_detalles[index].fecha_laborada"
                             type="hidden"
                     />
-                    <input
-                            type="text"
-                            v-on:focusout="validateDecimal(new_detalles[index])"
-                            min="0"
-                            max="24"
-                            v-bind:id="'new_detalles[' + index + '].horas_laboradas'"
-                            v-model="new_detalles[index].horas_laboradas"
-                            class="form-control text-center"
-                    />
+                    <div class='input-group'>
+                        <input
+                                type="text"
+                                min="0"
+                                max="24"
+                                maxlength="2"
+                                v-on:focusout="validateHorasInteger(new_detalles[index])"
+                                v-bind:id="'new_detalles[' + index + '].horas'"
+                                v-model="new_detalles[index].horas"
+                                class="form-control text-center"
+                        />
+                        <div class="input-group-addon">:</div>
+                        <input
+                                type="text"
+                                min="0"
+                                max="59"
+                                maxlength="2"
+                                v-on:focusout="validateMinutosInteger(new_detalles[index])"
+                                v-bind:id="'new_detalles[' + index + '].minutos'"
+                                v-model="new_detalles[index].minutos"
+                                class="form-control text-center"
+                        />
+                    </div>
                 </td>
                 <td></td>
             </tr>
@@ -166,6 +200,8 @@
             return {
                 fecha_laborada: ultimas_fechas[index],
                 horas_laboradas: 0,
+                horas: '',
+                minutos: '',
             }
         });
     }
@@ -235,28 +271,59 @@
                 })
             },
 
-            validateDecimal: _.debounce(function(hora) {
+            // TODO: Repeated code
+            fixHorasLeadingZero: function(horas_laboradas) {
+                var value = parseInt(horas_laboradas.horas);
+                if (value < 10) {
+                    horas_laboradas.horas = '0' + value;
+                }
+            },
+
+            // TODO: Repeated code
+            fixMinutosLeadingZero: function(horas_laboradas) {
+                var value = parseInt(horas_laboradas.minutos);
+                if (value < 10) {
+                    horas_laboradas.minutos = '0' + value;
+                }
+            },
+
+            // TODO: Repeated code
+            validateHorasInteger: function(hora) {
                 var min = 0;
                 var max = 24;
-                if (typeof hora.horas_laboradas === 'string') {
-                    hora.horas_laboradas = hora.horas_laboradas.replace(',', '.');
+                var value = parseInt(hora.horas);
+                if (value >= 0) {
+                    if (value < min) {
+                        value = 0;
+                    }
+                    if (value > max) {
+                        value = max;
+                    }
+                } else {
+                    value = '';
                 }
-                var value = parseFloat(hora.horas_laboradas);
+                hora.horas = value;
+                this.fixHorasLeadingZero(hora);
+            },
 
-                if (!value) {
-                    value = 0;
+            // TODO: Repeated code
+            validateMinutosInteger: function(hora) {
+                var min = 0;
+                var max = 59;
+                var value = parseInt(hora.minutos);
+                if (value >= 0) {
+                    if (value < min) {
+                        value = 0;
+                    }
+                    if (value > max) {
+                        value = max;
+                    }
+                } else {
+                    value = '';
                 }
-
-                if (value < min) {
-                    value = 0;
-                }
-
-                if (value > max) {
-                    value = max;
-                }
-
-                hora.horas_laboradas = parseFloat(value).toFixed(2);
-            }, 0)
+                hora.minutos = value;
+                this.fixMinutosLeadingZero(hora);
+            },
         },
 
         components: {
