@@ -77,10 +77,10 @@
                     />
 
                     <input
-                            type="number"
+                            type="text"
+                            v-on:focusout="validateDecimal(ultima_hora)"
                             min="0"
                             max="24"
-                            maxlength="2"
                             v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas'"
                             v-model="ultima_hora.horas_laboradas"
                             class="form-control text-center"
@@ -123,7 +123,8 @@
                             type="hidden"
                     />
                     <input
-                            type="number"
+                            type="text"
+                            v-on:focusout="validateDecimal(new_detalles[index])"
                             min="0"
                             max="24"
                             v-bind:id="'new_detalles[' + index + '].horas_laboradas'"
@@ -232,6 +233,29 @@
                     console.log(error, response);
                 })
             },
+
+            validateDecimal: _.debounce(function(hora) {
+                var min = 0;
+                var max = 24;
+                if (typeof hora.horas_laboradas === 'string') {
+                    hora.horas_laboradas = hora.horas_laboradas.replace(',', '.');
+                }
+                var value = parseFloat(hora.horas_laboradas);
+
+                if (!value) {
+                    value = 0;
+                }
+
+                if (value < min) {
+                    value = 0;
+                }
+
+                if (value > max) {
+                    value = max;
+                }
+
+                hora.horas_laboradas = parseFloat(value).toFixed(2);
+            }, 0)
         },
 
         components: {
