@@ -169,14 +169,6 @@
                 </td>
                 <td></td>
             </tr>
-            <tr>
-                <td colspan="7" class="text-right">
-                    <button v-on:click="saveHorasLaboradas" class="btn btn-primary">
-                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-                        Save
-                    </button>
-                </td>
-            </tr>
             </tbody>
         </table>
     </div>
@@ -217,7 +209,7 @@
             };
         },
 
-        props: ['horas_laboradas', 'planilla_id', 'colaborador_id', 'cuentas_costo', 'beneficios', 'cuentas_beneficios'],
+        props: ['horas_laboradas', 'planilla_id', 'colaborador_id', 'cuentas_costo', 'beneficios', 'cuentas_beneficios', 'eventHub'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -238,6 +230,10 @@
              * Prepare the component.
              */
             prepareComponent() {
+                var vm = this;
+                this.eventHub.$on('horasLaboradas.save' + this.planilla_id, function(event) {
+                    vm.saveHorasLaboradas(event);
+                })
             },
 
             getUltimasFechas() {
@@ -247,7 +243,6 @@
             },
 
             saveHorasLaboradas: function (event) {
-                event.preventDefault();
                 if (this.new_detalles.length
                         && this.new_horas_laboradas.cuenta_costo_id
                         && this.new_horas_laboradas.beneficio_id
@@ -264,10 +259,9 @@
 
                     $(document).trigger('horas_laboradas.update', this.planilla_id);
                     toastr.success('Horas laboradas ingresadas correctamente','Exito!');
-                    console.log(response);
                 }, (response) => {
                     toastr.error('Ocurrio un error al guardar horas laboradas','Error!');
-                    console.log(error, response);
+                    console.log(response);
                 })
             },
 

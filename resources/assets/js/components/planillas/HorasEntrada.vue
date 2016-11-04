@@ -69,11 +69,7 @@
                     </div>
 
                 </td>
-                <td>
-                    <button v-on:click="saveHorasEntrada" class="btn btn-primary btn-sm">
-                        <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-                    </button>
-                </td>
+                <td></td>
             </tr>
             </tbody>
         </table>
@@ -91,7 +87,7 @@
             };
         },
 
-        props: ['horas_entrada', 'colaborador_id'],
+        props: ['horas_entrada', 'colaborador_id', 'planilla_id', 'eventHub'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -112,6 +108,10 @@
              * Prepare the component.
              */
             prepareComponent() {
+                var vm = this;
+                this.eventHub.$on('horasEntrada.save' + this.planilla_id, function(event) {
+                    vm.saveHorasEntrada(event);
+                })
             },
 
             getUltimasFechas() {
@@ -121,12 +121,11 @@
             },
 
             saveHorasEntrada: function (event) {
-                event.preventDefault();
                 this.$http.post('/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
                     toastr.success('Horas de entrada actualizadas con correctamente','Exito!');
                 }, (response) => {
                     toastr.error('Ocurrio un error al guardar horas de entrada','Error!');
-                    console.log(error, response);
+                    console.log(response);
                 });
             },
 

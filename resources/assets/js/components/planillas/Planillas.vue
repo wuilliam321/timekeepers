@@ -137,14 +137,23 @@
                             <td colspan="6">
                                 <div class="panel panel-default">
                                     <div class="panel-body">
-                                        <horas-entrada v-bind:colaborador_id="planilla.colaborador_id"
+                                        <horas-entrada v-bind:eventHub="eventHub"
+                                                       v-bind:planilla_id="planilla.id"
+                                                       v-bind:colaborador_id="planilla.colaborador_id"
                                                        v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
-                                        <horas-laboradas v-bind:colaborador_id="planilla.colaborador_id"
+                                        <horas-laboradas v-bind:eventHub="eventHub"
+                                                         v-bind:colaborador_id="planilla.colaborador_id"
                                                          v-bind:planilla_id="planilla.id"
                                                          v-bind:cuentas_beneficios="cuentas_beneficios"
                                                          v-bind:beneficios="beneficios"
                                                          v-bind:cuentas_costo="cuentas_costo"
                                                          v-bind:horas_laboradas="horas_laboradas[planilla.id]"></horas-laboradas>
+                                        <div class="text-right">
+                                            <button v-on:click="saveHoras" class="btn btn-primary" v-bind:data-planilla_id="planilla.id">
+                                                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                                                Save
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </td>
@@ -206,6 +215,7 @@
                 sortDirection: 'asc',
                 next_url: '',
                 prev_url: '',
+                eventHub: new Vue(),
             };
         },
 
@@ -407,6 +417,12 @@
                         }));
                     });
                 }
+            },
+
+            saveHoras(event) {
+                var planilla_id = $(event.target).data('planilla_id');
+                this.eventHub.$emit('horasEntrada.save' + planilla_id);
+                this.eventHub.$emit('horasLaboradas.save' + planilla_id);
             }
         },
 
