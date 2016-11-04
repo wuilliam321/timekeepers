@@ -39,7 +39,8 @@
                         <th></th>
                         <th
                                 v-on:click="sortBy('nombre_colaborador')"
-                                v-bind:class="{active: sortKey == 'nombre_colaborador', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                                v-bind:class="{active: sortKey == 'nombre_colaborador', up: sortDirection == 'asc', down: sortDirection == 'desc'}"
+                                class="col-xs-3">
                             Colaborador
                             <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
                             <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
@@ -48,7 +49,8 @@
                         </th>
                         <th
                                 v-on:click="sortBy('cedula')"
-                                v-bind:class="{active: sortKey == 'cedula', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                                v-bind:class="{active: sortKey == 'cedula', up: sortDirection == 'asc', down: sortDirection == 'desc'}"
+                                class="col-xs-1">
                             Cedula
                             <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
                             <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
@@ -56,7 +58,8 @@
                         </th>
                         <th
                                 v-on:click="sortBy('nombre_proyecto')"
-                                v-bind:class="{active: sortKey == 'nombre_proyecto', up: sortDirection == 'asc', down: sortDirection == 'desc'}">
+                                v-bind:class="{active: sortKey == 'nombre_proyecto', up: sortDirection == 'asc', down: sortDirection == 'desc'}"
+                                class="col-xs-4">
                             Proyecto
                             <span class="pull-right glyphicon glyphicon-sort" aria-hidden="true"></span>
                             <span class="pull-right glyphicon glyphicon-sort-by-alphabet" aria-hidden="true"></span>
