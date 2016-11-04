@@ -76,6 +76,7 @@
                            type="hidden"
                     />
 
+                    <!--TODO: We need to send the model to the events in order to correctly manipulate and preseve changes-->
                     <input
                             type="text"
                             v-on:focusout="validateDecimal(ultima_hora)"

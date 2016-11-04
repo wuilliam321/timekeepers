@@ -188,7 +188,7 @@
          */
         data() {
             return {
-                REMOVE_HOST_REGEXP: /^[a-z]{4}\:\/{2}[a-z]{1,}\:[0-9]{1,4}.(.*)/,
+                REMOVE_HOST_REGEXP: /^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)([\/]{0,1}[^?#]*)(\?[^#]*|)(#.*|)$/,
                 planillas: [],
                 planillas_for_filter: [],
                 current_planilla_filter: '',
@@ -246,14 +246,21 @@
                 this.runGetPlanillasRequest(url);
             },
 
+            prepareUrl(url) {
+                if (url) {
+                    var match = url.match(this.REMOVE_HOST_REGEXP);
+                    return match[5] + match[6];
+                }
+                return undefined;
+            },
 
             runGetPlanillasRequest(url) {
                 this.$http.get(url).then(response => {
                     this.last_page = response.body.last_page;
                     this.total = this.last_page;
                     this.planillas = response.body.data;
-                    this.next_url = (response.body.next_page_url) ? '/' + response.body.next_page_url.replace(this.REMOVE_HOST_REGEXP, '$1') : null;
-                    this.prev_url = (response.body.prev_page_url) ? '/' + response.body.prev_page_url.replace(this.REMOVE_HOST_REGEXP, '$1'): null;
+                    this.next_url = this.prepareUrl(response.body.next_page_url);
+                    this.prev_url = this.prepareUrl(response.body.prev_page_url);
                 });
             },
 
