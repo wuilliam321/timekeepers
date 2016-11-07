@@ -59,9 +59,21 @@ class HorasEntradasController extends Controller
                     $horaEntrada->colaborador_id = $id;
                 }
                 $horaEntrada->hora_entrada = $this->getFixedHoras($hora_entrada);
-                $horaEntrada->save();
+                $dirtyFields = ($horaEntrada->isDirty()) ? $horaEntrada->getDirty() : [];
+                $isNew = !$horaEntrada->exists;
+                $saveResult = $horaEntrada->save();
+                if ($saveResult) {
+                    if ($isNew) {
+                        HorasLogsController::log('add', $horaEntrada, $horaEntrada->toArray());
+                    } else {
+                        if (sizeof($dirtyFields)) {
+                            HorasLogsController::log('update', $horaEntrada, $dirtyFields);
+                        }
+                    }
+                }
             }
         }
+        return $this->getHorasEntradasByColaboradorId($id);
     }
 
     public function getFixedHoras($hora_entrada)

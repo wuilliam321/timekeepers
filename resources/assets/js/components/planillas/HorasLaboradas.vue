@@ -266,8 +266,6 @@
                     horas_laboradas_for_save = [];
                     this.new_horas_laboradas = initializeNewHorasLaboradas();
                     this.new_detalles = initializeNewDetalles();
-
-                    $(document).trigger('horas_laboradas.update', this.planilla_id);
                     toastr.success('Horas laboradas ingresadas correctamente', 'Exito!');
                 }, (response) => {
                     toastr.error('Ocurrio un error al guardar horas laboradas', 'Error!');

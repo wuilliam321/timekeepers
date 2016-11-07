@@ -32,22 +32,29 @@ class HorasLaboradasController extends Controller
     public function saveByColaboradorId($id, Request $request)
     {
         $newItem = '';
-        $isNew = false;
         foreach($request->horas_laboradas as $horas_laborada) {
             $horasLaborada = new HorasLaborada;
             if (array_key_exists('id', $horas_laborada)) {
                 $horasLaborada = $horasLaborada->getById($horas_laborada['id']);
-            } else {
-                $isNew = true;
             }
             $horasLaborada->colaborador_id = $horas_laborada['colaborador_id'];
             $horasLaborada->planilla_id = $horas_laborada['planilla_id'];
             $horasLaborada->cuenta_costo_id = $horas_laborada['cuenta_costo_id'];
             $horasLaborada->beneficio_id = $horas_laborada['beneficio_id'];
             $horasLaborada->cuenta_beneficio_id = $horas_laborada['cuenta_beneficio_id'];
-            unset($horasLaborada->ultimas_horas);
             $ultimas_horas = $horas_laborada['ultimas_horas'];
-            $horasLaborada->save();
+            $dirtyFields = ($horasLaborada->isDirty()) ? $horasLaborada->getDirty() : [];
+            $isNew = !$horasLaborada->exists;
+            $saveResult = $horasLaborada->save();
+            if ($saveResult) {
+                if ($isNew) {
+                    HorasLogsController::log('add', $horasLaborada, $horasLaborada->toArray());
+                } else {
+                    if (sizeof($dirtyFields)) {
+                        HorasLogsController::log('update', $horasLaborada, $dirtyFields);
+                    }
+                }
+            }
             $horasLaborada->ultimas_horas = $ultimas_horas;
             $this->saveDetalles($horasLaborada, $horas_laborada);
             if ($isNew) {
@@ -82,7 +89,18 @@ class HorasLaboradasController extends Controller
             }
             $horas_laboradas = (intval($horas) * $una_hora) + intval($minutos);
             $horaDetalle->horas_laboradas = $horas_laboradas;
-            $horaDetalle->save();
+            $dirtyFields = ($horaDetalle->isDirty()) ? $horaDetalle->getDirty() : [];
+            $isNew = !$horaDetalle->exists;
+            $saveResult = $horaDetalle->save();
+            if ($saveResult) {
+                if ($isNew) {
+                    HorasLogsController::log('add', $horaDetalle, $horaDetalle->toArray());
+                } else {
+                    if (sizeof($dirtyFields)) {
+                        HorasLogsController::log('update', $horaDetalle, $dirtyFields);
+                    }
+                }
+            }
             $horaDetalle->horas = $detalle['horas'];
             $horaDetalle->minutos = $detalle['minutos'];
             array_push($ultimas_horas, $horaDetalle);
