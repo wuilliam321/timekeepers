@@ -26,7 +26,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-xs-10 form-inline">
+                    <div class="col-xs-3 form-inline">
                         <div class="form-group">
                             <label for="planillas-filter">
                                 Planillas
@@ -37,6 +37,17 @@
                                     <option v-bind:value="planilla">{{planilla}}</option>
                                 </template>
                             </select>
+                        </div>
+                    </div>
+                    <div class="col-xs-9 form-inline">
+                        <div class="form-group">
+                            <label for="planillas-filter">
+                                Buscar
+                            </label>
+                            <input
+                                    id="text-filter" class="form-control"
+                                    v-on:keyup="filterPlanillasByText"
+                            />
                         </div>
                     </div>
                 </div>
@@ -383,6 +394,14 @@
                 var url = '/api/planillas?' + params;
                 this.runGetPlanillasRequest(url);
             },
+
+            filterPlanillasByText: _.debounce(function(event) {
+                var text = $(event.target).val();
+                this.default_paginate_options.text = text;
+                var params = $.param(this.default_paginate_options);
+                var url = '/api/planillas?' + params;
+                this.runGetPlanillasRequest(url);
+            }, 300),
 
             getPlanillasFilter() {
 
