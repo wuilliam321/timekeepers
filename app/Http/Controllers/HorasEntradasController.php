@@ -32,8 +32,14 @@ class HorasEntradasController extends Controller
                 return [
                     'fecha_entrada' => $fecha,
                     'hora_entrada' => '',
+                    'horas' => '',
+                    'minutos' => ''
                 ];
             } else {
+                $splittedHora = explode(':', $hora[0]['hora_entrada']);
+                $hora[0]['horas'] = $splittedHora[0];
+                $hora[0]['minutos'] = $splittedHora[1];
+                $hora[0]['horas_entrada'] = $this->getFixedHoras($hora[0]);
                 return $hora[0];
             }
         }, $fechas);
@@ -52,7 +58,6 @@ class HorasEntradasController extends Controller
                     $horaEntrada->fecha_entrada = $hora_entrada['fecha_entrada'];
                     $horaEntrada->colaborador_id = $id;
                 }
-                echo $this->getFixedHoras($hora_entrada);
                 $horaEntrada->hora_entrada = $this->getFixedHoras($hora_entrada);
                 $horaEntrada->save();
             }

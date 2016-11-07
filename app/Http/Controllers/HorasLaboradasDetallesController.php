@@ -28,7 +28,9 @@ class HorasLaboradasDetallesController extends Controller
                 $hora = array_values(array_filter($horas, function ($hora)  use ($fecha) {
                     return $fecha === $hora['fecha_laborada'];
                 }));
-                $hora = $this->getHorasFromMinutos($hora[0]);
+                if ($hora) {
+                    $hora = $this->getHorasFromMinutos($hora[0]);
+                }
             }
 
             if (!$hora) {

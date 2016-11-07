@@ -30,13 +30,26 @@ class PlanillasController extends Controller
     public function getPlanillas() {
         $paginate_options = $_GET;
         $planillaModel = new Planilla();
-        return $planillaModel->getWithColaboradoresAndProyectos($paginate_options);
+        $planillas = $planillaModel->getWithColaboradoresAndProyectos($paginate_options);
+        return $this->mergeWithHoras($planillas);
 
     }
 
     public function getPlanillasFilters() {
         $planillaModel = new Planilla();
-        return $planillaModel->getWithColaboradoresAndProyectos(['per_page' => 99999]);
+        $planillas = $planillaModel->getWithColaboradoresAndProyectos(['per_page' => 99999]);
+        return $this->mergeWithHoras($planillas);
 
+    }
+
+    public function mergeWithHoras($planillas)
+    {
+        $horasEntradasController = new HorasEntradasController;
+        $horasLaboradasController = new HorasLaboradasController;
+        foreach ($planillas as $planilla) {
+            $planilla['horas_entrada'] = $horasEntradasController->getHorasEntradasByColaboradorId($planilla['colaborador_id']);
+            $planilla['horas_laboradas'] = $horasLaboradasController->getHorasLaboradasByPlanillaId($planilla['id']);
+        }
+        return $planillas;
     }
 }

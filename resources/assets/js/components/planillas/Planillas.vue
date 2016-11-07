@@ -99,6 +99,7 @@
                     <tbody>
                     <template v-for="planilla in planillas">
                         <tr
+                                :key="planilla.id"
                                 @click="togglePlanillaView"
                                 v-bind:data-colaborador-id="planilla.colaborador_id"
                                 v-bind:data-planilla-id="planilla.id">
@@ -133,21 +134,23 @@
                                 {{ planilla.tipo_salario}}
                             </td>
                         </tr>
-                        <tr class="horas-container hidden">
+                        <tr
+                                class="horas-container hidden"
+                                :key="planilla.id + 'b'">
                             <td colspan="6">
                                 <div class="panel panel-default">
                                     <div class="panel-body">
                                         <horas-entrada v-bind:eventHub="eventHub"
                                                        v-bind:planilla_id="planilla.id"
                                                        v-bind:colaborador_id="planilla.colaborador_id"
-                                                       v-bind:horas_entrada="horas_entrada[planilla.colaborador_id]"></horas-entrada>
+                                                       v-bind:horas_entrada="planilla.horas_entrada"></horas-entrada>
                                         <horas-laboradas v-bind:eventHub="eventHub"
                                                          v-bind:colaborador_id="planilla.colaborador_id"
                                                          v-bind:planilla_id="planilla.id"
                                                          v-bind:cuentas_beneficios="cuentas_beneficios"
                                                          v-bind:beneficios="beneficios"
                                                          v-bind:cuentas_costo="cuentas_costo"
-                                                         v-bind:horas_laboradas="horas_laboradas[planilla.id]"></horas-laboradas>
+                                                         v-bind:horas_laboradas="planilla.horas_laboradas"></horas-laboradas>
                                         <div class="text-right">
                                             <button v-on:click="saveHoras" class="btn btn-primary" v-bind:data-planilla_id="planilla.id">
                                                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
@@ -201,8 +204,6 @@
                 planillas: [],
                 planillas_for_filter: [],
                 current_planilla_filter: '',
-                horas_entrada: {},
-                horas_laboradas: {},
                 cuentas_costo: [],
                 beneficios: [],
                 cuentas_beneficios: [],
@@ -240,11 +241,6 @@
             prepareComponent() {
                 this.getPlanillas();
                 this.getPlanillasFilter();
-                var vm = this;
-
-                $(document).on('horas_laboradas.update', function (e, planilla_id) {
-                    vm.getHorasLaboradas(planilla_id);
-                });
             },
 
             /**
@@ -271,6 +267,17 @@
                     this.planillas = response.body.data;
                     this.next_url = this.prepareUrl(response.body.next_page_url);
                     this.prev_url = this.prepareUrl(response.body.prev_page_url);
+
+                    var vm = this;
+                    vm.eventHub.$off('horas_laboradas.delete');
+                    vm.eventHub.$on('horas_laboradas.delete', function(planilla_id, id) {
+                        var planilla = _.find(vm.planillas, function(planilla) {
+                            return planilla.id === planilla_id;
+                        });
+                        planilla.horas_laboradas = _.filter(planilla.horas_laboradas, function(hora) {
+                            return hora.id !== id;
+                        });
+                    });
                 });
             },
 
@@ -280,38 +287,9 @@
                 $element.find('i').toggleClass('hidden');
 
                 if (!$element.next().hasClass('hidden')) {
-                    this.getHorasEntrada($element.data('colaborador-id'));
-                    this.getHorasLaboradas($element.data('planilla-id'));
                     this.getCuentasCosto();
                     this.getBeneficios();
                     this.getCuentasBeneficios();
-                }
-            },
-
-            getHorasEntrada(colaborador_id) {
-                var vm = this;
-                if (colaborador_id) {
-                    this.$http.get('/api/horas_entrada/' + colaborador_id).then(response => {
-                        var horas = _.clone(vm.horas_entrada);
-                        horas[colaborador_id] = response.data;
-                        _.each(horas[colaborador_id], function (hora) {
-                            var splitted = hora.hora_entrada.split(':');
-                            hora.horas = splitted[0];
-                            hora.minutos = splitted[1];
-                        });
-                        Vue.set(vm, 'horas_entrada', horas);
-                    });
-                }
-            },
-
-            getHorasLaboradas(planilla_id) {
-                var vm = this;
-                if (planilla_id) {
-                    this.$http.get('/api/horas_laboradas/' + planilla_id).then(response => {
-                        var horas = _.clone(vm.horas_laboradas);
-                        horas[planilla_id] = response.data;
-                        Vue.set(vm, 'horas_laboradas', horas);
-                    });
                 }
             },
 
@@ -343,7 +321,6 @@
             },
 
             sortBy(key) {
-//                this.closeAllToggled();
                 $('.horas-container').addClass('hidden');
                 this.checkSortDirection(key);
                 this.sortKey = key;

@@ -31,24 +31,38 @@ class HorasLaboradasController extends Controller
 
     public function saveByColaboradorId($id, Request $request)
     {
+        $newItem = '';
+        $isNew = false;
         foreach($request->horas_laboradas as $horas_laborada) {
             $horasLaborada = new HorasLaborada;
             if (array_key_exists('id', $horas_laborada)) {
                 $horasLaborada = $horasLaborada->getById($horas_laborada['id']);
+            } else {
+                $isNew = true;
             }
             $horasLaborada->colaborador_id = $horas_laborada['colaborador_id'];
             $horasLaborada->planilla_id = $horas_laborada['planilla_id'];
             $horasLaborada->cuenta_costo_id = $horas_laborada['cuenta_costo_id'];
             $horasLaborada->beneficio_id = $horas_laborada['beneficio_id'];
             $horasLaborada->cuenta_beneficio_id = $horas_laborada['cuenta_beneficio_id'];
+            unset($horasLaborada->ultimas_horas);
+            $ultimas_horas = $horas_laborada['ultimas_horas'];
             $horasLaborada->save();
-            $this->saveDetalles($horasLaborada->id, $horas_laborada['ultimas_horas']);
+            $horasLaborada->ultimas_horas = $ultimas_horas;
+            $this->saveDetalles($horasLaborada, $horas_laborada);
+            if ($isNew) {
+                $newItem = $horasLaborada;
+            }
         };
+        return $newItem;
     }
 
-    public function saveDetalles($horas_laboradas_id, $detalles)
+    public function saveDetalles(&$horasLaborada, $horas_laboradas)
     {
-        foreach ($detalles as $detalle) {
+        $horas_laboradas_id = $horasLaborada->id;
+        $detalles = $horas_laboradas['ultimas_horas'];
+        $ultimas_horas = [];
+        foreach ($detalles as $key => $detalle) {
             $horaDetalle = new HorasLaboradasDetalle;
             if (array_key_exists('id', $detalle)) {
                 $horaDetalle = $horaDetalle->getById($detalle['id']);
@@ -69,7 +83,11 @@ class HorasLaboradasController extends Controller
             $horas_laboradas = (intval($horas) * $una_hora) + intval($minutos);
             $horaDetalle->horas_laboradas = $horas_laboradas;
             $horaDetalle->save();
+            $horaDetalle->horas = $detalle['horas'];
+            $horaDetalle->minutos = $detalle['minutos'];
+            array_push($ultimas_horas, $horaDetalle);
         }
+        $horasLaborada->ultimas_horas = $ultimas_horas;
     }
 
     public function deleteById($id)

@@ -15,12 +15,12 @@
 </style>
 
 <template>
-    <div style="padding-right: 0px !important;" class="col-xs-7 pull-right">
+    <div>
         <!-- Current Planillas -->
         <table class="table table-borderless m-b-none">
             <thead>
                 <tr>
-                    <th class="col-xs-5"></th>
+                    <th class="col-xs-3"></th>
                     <th v-for="fecha in getUltimasFechas()">
                         {{ fecha | date_format('MMM-DD') }}
                     </th>
@@ -31,7 +31,7 @@
             <tbody>
             <tr>
                 <!-- Action -->
-                <td style="vertical-align: middle;" class="text-center">
+                <td style="vertical-align: middle;">
                     Hora de entrada
                 </td>
 
@@ -109,9 +109,10 @@
              */
             prepareComponent() {
                 var vm = this;
+                this.eventHub.$off('horasEntrada.save' + this.planilla_id);
                 this.eventHub.$on('horasEntrada.save' + this.planilla_id, function(event) {
                     vm.saveHorasEntrada(event);
-                })
+                });
             },
 
             getUltimasFechas() {

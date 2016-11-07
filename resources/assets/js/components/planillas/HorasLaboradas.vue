@@ -6,9 +6,11 @@
     .m-b-none {
         margin-bottom: 0;
     }
+
     .input-group-addon {
         padding: 6px 1px;
     }
+
     .form-control {
         padding: 6px;
     }
@@ -79,7 +81,7 @@
                     <input
                             v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas_id'"
                             v-model="hora.id"
-                           type="hidden"
+                            type="hidden"
                     />
 
                     <!--TODO: We need to send the model to the events in order to correctly manipulate and preseve changes-->
@@ -108,7 +110,10 @@
                     </div>
                 </td>
                 <td>
-                    <remove-hora v-bind:planilla_id="planilla_id" v-bind:hora_id="hora.id"></remove-hora>
+                    <remove-hora
+                            v-bind:eventHub="eventHub"
+                            v-bind:planilla_id="planilla_id"
+                            v-bind:hora_id="hora.id"></remove-hora>
                 </td>
             </tr>
             <tr>
@@ -231,9 +236,10 @@
              */
             prepareComponent() {
                 var vm = this;
-                this.eventHub.$on('horasLaboradas.save' + this.planilla_id, function(event) {
+                this.eventHub.$off('horasLaboradas.save' + this.planilla_id);
+                this.eventHub.$on('horasLaboradas.save' + this.planilla_id, function (event) {
                     vm.saveHorasLaboradas(event);
-                })
+                });
             },
 
             getUltimasFechas() {
@@ -243,6 +249,7 @@
             },
 
             saveHorasLaboradas: function (event) {
+                var horas_laboradas_for_save = _.clone(this.horas_laboradas);
                 if (this.new_detalles.length
                         && this.new_horas_laboradas.cuenta_costo_id
                         && this.new_horas_laboradas.beneficio_id
@@ -250,23 +257,26 @@
                     this.new_horas_laboradas.planilla_id = this.planilla_id;
                     this.new_horas_laboradas.colaborador_id = this.colaborador_id;
                     this.new_horas_laboradas.ultimas_horas = this.new_detalles;
-                    this.horas_laboradas.push(this.new_horas_laboradas);
+                    horas_laboradas_for_save.push(this.new_horas_laboradas);
                 }
-                this.$http.post('/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: this.horas_laboradas}).then(response => {
-                    // Cleaning the new element
+                this.$http.post('/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: horas_laboradas_for_save}).then(response => {
+                    if (response.data.id) {
+                        this.horas_laboradas.push(response.data);
+                    }
+                    horas_laboradas_for_save = [];
                     this.new_horas_laboradas = initializeNewHorasLaboradas();
                     this.new_detalles = initializeNewDetalles();
 
                     $(document).trigger('horas_laboradas.update', this.planilla_id);
-                    toastr.success('Horas laboradas ingresadas correctamente','Exito!');
+                    toastr.success('Horas laboradas ingresadas correctamente', 'Exito!');
                 }, (response) => {
-                    toastr.error('Ocurrio un error al guardar horas laboradas','Error!');
+                    toastr.error('Ocurrio un error al guardar horas laboradas', 'Error!');
                     console.log(response);
                 })
             },
 
             // TODO: Repeated code
-            fixHorasLeadingZero: function(horas_laboradas) {
+            fixHorasLeadingZero: function (horas_laboradas) {
                 var value = parseInt(horas_laboradas.horas);
                 if (value < 10) {
                     horas_laboradas.horas = '0' + value;
@@ -274,7 +284,7 @@
             },
 
             // TODO: Repeated code
-            fixMinutosLeadingZero: function(horas_laboradas) {
+            fixMinutosLeadingZero: function (horas_laboradas) {
                 var value = parseInt(horas_laboradas.minutos);
                 if (value < 10) {
                     horas_laboradas.minutos = '0' + value;
@@ -282,7 +292,7 @@
             },
 
             // TODO: Repeated code
-            validateHorasInteger: function(hora) {
+            validateHorasInteger: function (hora) {
                 var min = 0;
                 var max = 24;
                 var value = parseInt(hora.horas);
@@ -301,7 +311,7 @@
             },
 
             // TODO: Repeated code
-            validateMinutosInteger: function(hora) {
+            validateMinutosInteger: function (hora) {
                 var min = 0;
                 var max = 59;
                 var value = parseInt(hora.minutos);
