@@ -27,6 +27,9 @@
             <li class="{{ isActiveRoute('planillas') }}">
                 <a href="{{ url('/planillas') }}"><i class="fa fa-th-large"></i> <span class="nav-label">Planillas</span> </a>
             </li>
+            <li class="{{ isActiveRoute('logger') }}">
+                <a href="{{ url('/logger') }}" target="_blank"><i class="fa fa-th-large"></i> <span class="nav-label">Log de cambios</span> </a>
+            </li>
         </ul>
 
     </div>

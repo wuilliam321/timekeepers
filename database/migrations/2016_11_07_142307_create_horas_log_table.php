@@ -16,6 +16,7 @@ class CreateHorasLogTable extends Migration
         Schema::create('horas_logs', function (Blueprint $table) {
             $table->increments('id');
             $table->text('table');
+            $table->integer('object_id');
             $table->text('value');
             $table->text('action');
             $table->text('user');

@@ -46,6 +46,3 @@ Route::get('/beneficios', 'BeneficiosController@getAllBeneficios')
 
 Route::get('/cuentas_beneficios', 'CuentasBeneficiosController@getAllCuentas')
     ->middleware('auth:api');
-
-Route::get('/logger', 'HorasLogsController@log')
-    ->middleware('auth:api');
