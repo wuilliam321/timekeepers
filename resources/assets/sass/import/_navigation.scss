@@ -38,6 +38,23 @@
   border-color: $nav-bg;
 }
 
+.navbar-default .logo {
+  background-color: #ccc;
+}
+
+.navbar-default .logo {
+  background-image: url('../logo.png');
+  background-position: center;
+  background-size: 100%;
+  background-repeat:no-repeat;
+  height: 160px;
+}
+
+.mini-navbar .logo {
+  background-position: -6px;
+  background-size: 290px;
+}
+
 .navbar-top-links li {
   display: inline-block;
 }

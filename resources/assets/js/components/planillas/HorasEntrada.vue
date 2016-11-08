@@ -122,8 +122,15 @@
 
             saveHorasEntrada: function (event) {
                 this.$http.post('/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
+                    var message = '';
                     this.horas_entrada = _.merge(this.horas_entrada, response.data);
-                    toastr.success('Horas de entrada actualizadas con correctamente','Exito!');
+                    if (response.data.add) {
+                        message = 'Horas de entrada ingresadas con correctamente';
+                        toastr.success(message, 'Exito!');
+                    } else if (response.data.update) {
+                        message = 'Horas de entrada actualizadas con correctamente';
+                        toastr.success(message, 'Exito!');
+                    }
                 }, (response) => {
                     toastr.error('Ocurrio un error al guardar horas de entrada','Error!');
                     console.log(response);

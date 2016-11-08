@@ -36,7 +36,10 @@ class HorasLaboradasController extends Controller
 
     public function saveByColaboradorId($id, Request $request)
     {
-        $newItem = '';
+        $dirtyFields = [];
+        $isNew = false;
+        $returnMsg = ['update' => false, 'add' => false];
+        $horasLaborada = '';
         foreach($request->horas_laboradas as $horas_laborada) {
             $horasLaborada = new HorasLaborada;
             if (array_key_exists('id', $horas_laborada)) {
@@ -61,15 +64,23 @@ class HorasLaboradasController extends Controller
                 }
             }
             $horasLaborada->ultimas_horas = $ultimas_horas;
-            $this->saveDetalles($horasLaborada, $horas_laborada);
-            if ($isNew) {
-                $newItem = $horasLaborada;
-            }
+            $this->saveDetalles($horasLaborada, $horas_laborada, $returnMsg);
         };
-        return $newItem;
+        if ($isNew) {
+            $returnMsg['add'] = true;
+        }
+        if (sizeof($dirtyFields)) {
+            $returnMsg['update'] = true;
+        }
+
+        if ($horasLaborada) {
+            return array_merge($horasLaborada->toArray(), $returnMsg);
+        } else {
+            return $returnMsg;
+        }
     }
 
-    public function saveDetalles(&$horasLaborada, $horas_laboradas)
+    public function saveDetalles(&$horasLaborada, $horas_laboradas, &$returnMsg)
     {
         $horas_laboradas_id = $horasLaborada->id;
         $detalles = $horas_laboradas['ultimas_horas'];
@@ -105,6 +116,12 @@ class HorasLaboradasController extends Controller
                         HorasLogsController::log('update', $horaDetalle, $dirtyFields);
                     }
                 }
+            }
+            if ($isNew) {
+                $returnMsg['add'] = true;
+            }
+            if (sizeof($dirtyFields)) {
+                $returnMsg['update'] = true;
             }
             $horaDetalle->horas = $detalle['horas'];
             $horaDetalle->minutos = $detalle['minutos'];

@@ -259,13 +259,17 @@
                     horas_laboradas_for_save.push(this.new_horas_laboradas);
                 }
                 this.$http.post('/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: horas_laboradas_for_save}).then(response => {
-                    if (response.data.id) {
+                    var message = '';
+                    if (response.data.add && response.data.id) {
                         this.horas_laboradas.push(response.data);
+                        message = 'Horas laboradas ingresadas correctamente';
+                        toastr.success(message, 'Exito!');
+                    } else if (response.data.update) {
+                        message = 'Horas laboradas actualizadas correctamente';
+                        toastr.success(message, 'Exito!');
                     }
-                    horas_laboradas_for_save = [];
                     this.new_horas_laboradas = initializeNewHorasLaboradas();
                     this.new_detalles = initializeNewDetalles();
-                    toastr.success('Horas laboradas ingresadas correctamente', 'Exito!');
                 }, (response) => {
                     toastr.error('Ocurrio un error al guardar horas laboradas', 'Error!');
                     console.log(response);

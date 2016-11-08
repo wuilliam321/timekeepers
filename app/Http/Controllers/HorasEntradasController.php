@@ -49,6 +49,9 @@ class HorasEntradasController extends Controller
 
     public function saveByColaboradorId($id, Request $request)
     {
+        $dirtyFields = [];
+        $isNew = false;
+        $returnMsg = ['update' => false, 'add' => false];
         foreach($request->horas_entrada as $hora_entrada) {
             if ($hora_entrada['horas'] !== '' && $hora_entrada['minutos'] !== '') {
                 $horaEntrada = new HorasEntrada;
@@ -73,7 +76,18 @@ class HorasEntradasController extends Controller
                 }
             }
         }
-        return $this->getHorasEntradasByColaboradorId($id);
+        if ($isNew) {
+            $returnMsg['add'] = true;
+        }
+        if (sizeof($dirtyFields)) {
+            $returnMsg['update'] = true;
+        }
+
+        if ($isNew || sizeof($dirtyFields)) {
+            return array_merge($this->getHorasEntradasByColaboradorId($id), $returnMsg);
+        } else {
+            return $returnMsg;
+        }
     }
 
     public function getFixedHoras($hora_entrada)
