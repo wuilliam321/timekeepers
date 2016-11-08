@@ -109,7 +109,6 @@
              */
             prepareComponent() {
                 var vm = this;
-                this.eventHub.$off('horasEntrada.save' + this.planilla_id);
                 this.eventHub.$on('horasEntrada.save' + this.planilla_id, function(event) {
                     vm.saveHorasEntrada(event);
                 });

@@ -163,7 +163,7 @@
                                                          v-bind:cuentas_costo="cuentas_costo"
                                                          v-bind:horas_laboradas="planilla.horas_laboradas"></horas-laboradas>
                                         <div class="text-right">
-                                            <button v-on:click="saveHoras" class="btn btn-primary" v-bind:data-planilla_id="planilla.id">
+                                            <button v-on:click="saveHoras(planilla.id)" class="btn btn-primary">
                                                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                                                 Save
                                             </button>
@@ -286,7 +286,6 @@
                     this.prev_url = this.prepareUrl(response.body.prev_page_url);
 
                     var vm = this;
-                    vm.eventHub.$off('horas_laboradas.delete');
                     vm.eventHub.$on('horas_laboradas.delete', function(planilla_id, id) {
                         var planilla = _.find(vm.planillas, function(planilla) {
                             return planilla.id === planilla_id;
@@ -415,8 +414,7 @@
                 }
             },
 
-            saveHoras(event) {
-                var planilla_id = $(event.target).data('planilla_id');
+            saveHoras(planilla_id) {
                 this.eventHub.$emit('horasEntrada.save' + planilla_id);
                 this.eventHub.$emit('horasLaboradas.save' + planilla_id);
             }
