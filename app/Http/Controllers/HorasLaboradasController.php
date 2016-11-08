@@ -22,11 +22,16 @@ class HorasLaboradasController extends Controller
     public function mapUltimasHorasToHorasLaboradas($horasLaboradas)
     {
         foreach ($horasLaboradas as $horasLaborada) {
-            $horasLaboradasDetallesController = new HorasLaboradasDetallesController();
-            $horasLaborada->ultimas_horas = $horasLaboradasDetallesController->getUltimasHorasByHorasLaboradaId($horasLaborada->id);
+            $this->setUltimasHoras($horasLaborada);
         }
 
         return $horasLaboradas;
+    }
+
+    public function setUltimasHoras(&$horasLaborada)
+    {
+        $horasLaboradasDetallesController = new HorasLaboradasDetallesController();
+        $horasLaborada->ultimas_horas = $horasLaboradasDetallesController->getUltimasHorasByHorasLaboradaId($horasLaborada->id);
     }
 
     public function saveByColaboradorId($id, Request $request)
@@ -112,6 +117,11 @@ class HorasLaboradasController extends Controller
     {
         $horasLaboradas = new HorasLaborada();
         $horaLaborada = $horasLaboradas->getById($id);
-        $horaLaborada->delete();
+        $this->setUltimasHoras($horaLaborada);
+        $horaLaboradaBackup = $horaLaborada;
+        $saveResult = $horaLaborada->delete();
+        if ($saveResult) {
+            HorasLogsController::log('delete', $horaLaboradaBackup, $horaLaboradaBackup->toArray());
+        }
     }
 }
