@@ -26,7 +26,7 @@
         <div class="panel panel-default">
             <div class="panel-body">
                 <div class="row">
-                    <div class="col-xs-3 form-inline">
+                    <div class="col-xs-3">
                         <div class="form-group">
                             <label for="planillas-filter">
                                 Planillas
@@ -39,7 +39,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="col-xs-9 form-inline">
+                    <div class="col-xs-9">
                         <div class="form-group">
                             <label for="planillas-filter">
                                 Buscar
