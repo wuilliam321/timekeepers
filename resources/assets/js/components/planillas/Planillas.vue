@@ -250,6 +250,12 @@
              * Prepare the component.
              */
             prepareComponent() {
+                // Selectores
+                this.getCuentasCosto();
+                this.getBeneficios();
+                this.getCuentasBeneficios();
+
+                // Planillas
                 this.getPlanillas();
                 this.getPlanillasFilter();
             },
@@ -296,12 +302,6 @@
                 var $element = $(event.currentTarget);
                 $element.next().toggleClass('hidden');
                 $element.find('i').toggleClass('hidden');
-
-                if (!$element.next().hasClass('hidden')) {
-                    this.getCuentasCosto();
-                    this.getBeneficios();
-                    this.getCuentasBeneficios();
-                }
             },
 
             getCuentasCosto() {
