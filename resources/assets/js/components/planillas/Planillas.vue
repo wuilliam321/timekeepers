@@ -47,6 +47,7 @@
                             <input
                                     id="text-filter" class="form-control"
                                     v-on:keyup="filterPlanillasByText"
+                                    placeholder="Buscar por nombre del colaborador, cedula, nombre del proyecto o tipo de salario"
                             />
                         </div>
                     </div>
