@@ -56,7 +56,6 @@
                     this.$http.delete('/api/horas_laboradas/' + this.hora_id).then(response => {
                         toastr.success('Horas laboradas eliminadas correctamente', 'Exito!');
                         this.eventHub.$emit('horas_laboradas.delete', this.planilla_id, this.hora_id);
-                        console.log(response);
                     }, (response) => {
                         toastr.error('Ocurrio un error al eliminar horas laboradas', 'Error!');
                         console.log(response);

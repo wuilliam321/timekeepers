@@ -33,9 +33,10 @@ class HorasLaboradasDetallesController extends Controller
             if (!$hora) {
                 return [
                     'fecha_laborada' => $fecha,
-                    'horas_laboradas' => 0,
+                    'horas_laboradas' => '0.00',
                 ];
             } else {
+                $hora[0]['horas_laboradas'] = number_format($hora[0]['horas_laboradas'], 2, '.', ',');
                 return $hora[0];
             }
         }, $fechas);

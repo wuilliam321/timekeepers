@@ -89,6 +89,7 @@
                             type="text"
                             min="0"
                             max="24"
+                            maxlength="5"
                             v-on:focusout="validateDecimal(ultima_hora)"
                             v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas'"
                             v-model="ultima_hora.horas_laboradas"
@@ -134,17 +135,16 @@
                             v-model="new_detalles[index].fecha_laborada"
                             type="hidden"
                     />
-                    <div class='input-group'>
-                        <input
-                                type="text"
-                                v-on:focusout="validateDecimal(new_detalles[index])"
-                                min="0"
-                                max="24"
-                                v-bind:id="'new_detalles[' + index + '].horas_laboradas'"
-                                v-model="new_detalles[index].horas_laboradas"
-                                class="form-control text-center"
-                        />
-                    </div>
+                    <input
+                            type="text"
+                            v-on:focusout="validateDecimal(new_detalles[index])"
+                            min="0"
+                            max="24"
+                            maxlength="5"
+                            v-bind:id="'new_detalles[' + index + '].horas_laboradas'"
+                            v-model="new_detalles[index].horas_laboradas"
+                            class="form-control text-center"
+                    />
                 </td>
                 <td></td>
             </tr>
@@ -170,7 +170,7 @@
         return _.map(_.range(0, 3), function (index) {
             return {
                 fecha_laborada: ultimas_fechas[index],
-                horas_laboradas: 0,
+                horas_laboradas: '0.00',
                 horas: '',
                 minutos: '',
             }
@@ -234,8 +234,8 @@
                 }
                 this.$http.post('/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: horas_laboradas_for_save}).then(response => {
                     var message = '';
-                    if (response.data.add && response.data.id) {
-                        this.horas_laboradas.push(response.data);
+                    this.horas_laboradas = _.merge(this.horas_laboradas, response.data);
+                    if (response.data.add) {
                         message = 'Horas laboradas ingresadas correctamente';
                         toastr.success(message, 'Exito!');
                     } else if (response.data.update) {

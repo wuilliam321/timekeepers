@@ -39,7 +39,6 @@ class HorasLaboradasController extends Controller
         $dirtyFields = [];
         $isNew = false;
         $returnMsg = ['update' => false, 'add' => false];
-        $horasLaborada = '';
         foreach($request->horas_laboradas as $horas_laborada) {
             $horasLaborada = new HorasLaborada;
             if (array_key_exists('id', $horas_laborada)) {
@@ -73,8 +72,8 @@ class HorasLaboradasController extends Controller
             $returnMsg['update'] = true;
         }
 
-        if ($horasLaborada) {
-            return array_merge($horasLaborada->toArray(), $returnMsg);
+        if ($isNew || sizeof($dirtyFields)) {
+            return array_merge($this->getHorasLaboradasByPlanillaId($id)->toArray(), $returnMsg);
         } else {
             return $returnMsg;
         }
@@ -92,7 +91,7 @@ class HorasLaboradasController extends Controller
             }
             $horaDetalle->horas_laboradas_id = $horas_laboradas_id;
             $horaDetalle->fecha_laborada = $detalle['fecha_laborada'];
-            $horaDetalle->horas_laboradas = $detalle['horas_laboradas'];
+            $horaDetalle->horas_laboradas = floatval($detalle['horas_laboradas']);
             $dirtyFields = ($horaDetalle->isDirty()) ? $horaDetalle->getDirty() : [];
             $isNew = !$horaDetalle->exists;
             $saveResult = $horaDetalle->save();
