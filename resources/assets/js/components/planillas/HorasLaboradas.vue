@@ -188,7 +188,7 @@
             };
         },
 
-        props: ['horas_laboradas', 'planilla_id', 'colaborador_id', 'cuentas_costo', 'beneficios', 'cuentas_beneficios', 'eventHub'],
+        props: ['horas_laboradas', 'planilla_id', 'colaborador_id', 'cuentas_costo', 'beneficios', 'cuentas_beneficios', 'eventHub', 'isSaving'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -244,9 +244,11 @@
                     }
                     this.new_horas_laboradas = initializeNewHorasLaboradas();
                     this.new_detalles = initializeNewDetalles();
+                    this.eventHub.$emit('horas.saveCompleted');
                 }, (response) => {
                     toastr.error('Ocurrio un error al guardar horas laboradas', 'Error!');
                     console.log(response);
+                    this.eventHub.$emit('horas.saveCompleted');
                 })
             },
 

@@ -163,8 +163,11 @@
                                                          v-bind:beneficios="beneficios"
                                                          v-bind:cuentas_costo="cuentas_costo"
                                                          v-bind:horas_laboradas="planilla.horas_laboradas"></horas-laboradas>
-                                        <div class="text-right">
-                                            <button v-on:click="saveHoras(planilla.id)" class="btn btn-primary">
+                                        <div>
+                                            <button v-show="isSaving" class="btn btn-primary disabled col-xs-1 pull-right">
+                                                <i class="fa fa-spinner fa-spin"></i>&nbsp;
+                                            </button>
+                                            <button v-show="!isSaving" v-on:click="saveHoras(planilla.id)" class="btn btn-primary col-xs-1 pull-right">
                                                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
                                                 Save
                                             </button>
@@ -229,6 +232,7 @@
                 next_url: '',
                 prev_url: '',
                 eventHub: new Vue(),
+                isSaving: false,
             };
         },
 
@@ -259,6 +263,13 @@
                 // Planillas
                 this.getPlanillas();
                 this.getPlanillasFilter();
+
+                var vm = this;
+                vm.eventHub.$on('horas.saveCompleted', function() {
+                    setTimeout(function() {
+                        vm.isSaving = false;
+                    }, 300);
+                });
             },
 
             /**
@@ -416,6 +427,7 @@
             },
 
             saveHoras(planilla_id) {
+                this.isSaving = true;
                 this.eventHub.$emit('horasEntrada.save' + planilla_id);
                 this.eventHub.$emit('horasLaboradas.save' + planilla_id);
             }

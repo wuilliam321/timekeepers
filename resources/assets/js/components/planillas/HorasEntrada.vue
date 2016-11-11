@@ -87,7 +87,7 @@
             };
         },
 
-        props: ['horas_entrada', 'colaborador_id', 'planilla_id', 'eventHub'],
+        props: ['horas_entrada', 'colaborador_id', 'planilla_id', 'eventHub', 'isSaving'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -131,9 +131,11 @@
                         message = 'Horas de entrada actualizadas con correctamente';
                         toastr.success(message, 'Exito!');
                     }
+                    this.eventHub.$emit('horas.saveCompleted');
                 }, (response) => {
                     toastr.error('Ocurrio un error al guardar horas de entrada','Error!');
                     console.log(response);
+                    this.eventHub.$emit('horas.saveCompleted');
                 });
             },
 
