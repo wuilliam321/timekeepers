@@ -92,19 +92,7 @@ class HorasLaboradasController extends Controller
             }
             $horaDetalle->horas_laboradas_id = $horas_laboradas_id;
             $horaDetalle->fecha_laborada = $detalle['fecha_laborada'];
-
-            $una_hora = 60;
-            $horas = 0;
-            $minutos = 0;
-            if ($detalle['horas']) {
-                $horas = intval($detalle['horas']);
-            }
-
-            if ($detalle['minutos']) {
-                $minutos = $detalle['minutos'];
-            }
-            $horas_laboradas = (intval($horas) * $una_hora) + intval($minutos);
-            $horaDetalle->horas_laboradas = $horas_laboradas;
+            $horaDetalle->horas_laboradas = $detalle['horas_laboradas'];
             $dirtyFields = ($horaDetalle->isDirty()) ? $horaDetalle->getDirty() : [];
             $isNew = !$horaDetalle->exists;
             $saveResult = $horaDetalle->save();
@@ -123,8 +111,6 @@ class HorasLaboradasController extends Controller
             if (sizeof($dirtyFields)) {
                 $returnMsg['update'] = true;
             }
-            $horaDetalle->horas = $detalle['horas'];
-            $horaDetalle->minutos = $detalle['minutos'];
             array_push($ultimas_horas, $horaDetalle);
         }
         $horasLaborada->ultimas_horas = $ultimas_horas;

@@ -16,7 +16,7 @@ class CreateHorasLaboradasDetallesTable extends Migration
         Schema::create('horas_laboradas_detalles', function (Blueprint $table) {
             $table->increments('id');
             $table->date('fecha_laborada');
-            $table->integer('horas_laboradas', false, true);
+            $table->float('horas_laboradas');
 
             $table->integer('horas_laboradas_id')->unsigned();
             $table->foreign('horas_laboradas_id')->references('id')->on('horas_laboradas')

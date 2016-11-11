@@ -28,17 +28,12 @@ class HorasLaboradasDetallesController extends Controller
                 $hora = array_values(array_filter($horas, function ($hora)  use ($fecha) {
                     return $fecha === $hora['fecha_laborada'];
                 }));
-                if ($hora) {
-                    $hora = $this->getHorasFromMinutos($hora[0]);
-                }
             }
 
             if (!$hora) {
                 return [
                     'fecha_laborada' => $fecha,
                     'horas_laboradas' => 0,
-                    'horas' => '',
-                    'minutos' => '',
                 ];
             } else {
                 return $hora[0];
@@ -46,26 +41,5 @@ class HorasLaboradasDetallesController extends Controller
         }, $fechas);
 
         return array_reverse($fechas);
-    }
-
-    public function getHorasFromMinutos($hora)
-    {
-        $una_hora = 60;
-        $horas_laboradas = intval($hora['horas_laboradas']) / $una_hora;
-        $horas = floor($horas_laboradas);
-        $minutos = ($horas_laboradas - $horas) * $una_hora;
-
-        if ($horas < 10) {
-            $horas = '0' . $horas;
-        }
-
-        if ($minutos < 10) {
-            $minutos = '0' . $minutos;
-        }
-
-        $hora['minutos'] = $minutos;
-        $hora['horas'] = $horas;
-
-        return [$hora];
     }
 }
