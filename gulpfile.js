@@ -14,6 +14,14 @@ require('laravel-elixir-vue-2');
  */
 
 elixir(mix => {
+    Elixir.webpack.mergeConfig({
+        module: {
+            rules: [
+                {include: /\.json$/, loaders: ["json-loader"]}
+            ]
+        },
+    });
+
     mix.sass('app.scss');
     mix.copy('resources/assets/vendor/bootstrap/fonts', 'public/fonts/bootstrap');
     mix.copy('resources/assets/vendor/font-awesome/fonts', 'public/fonts');
