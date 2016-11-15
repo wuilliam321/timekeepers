@@ -121,7 +121,7 @@
             },
 
             saveHorasEntrada: function (event) {
-                this.$http.post('/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
+                this.$http.post('/timekeepers/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
                     var message = '';
                     this.horas_entrada = _.merge(this.horas_entrada, response.data);
                     if (response.data.add) {

@@ -129,20 +129,20 @@
                 </td>
 
                 <!-- Dias -->
-                <td v-for="(hora, index) in getUltimasFechas()">
+                <td v-for="new_detalle in new_detalles">
                     <input
-                            v-bind:id="'new_detalles[' + index + '].fecha_laborada'"
-                            v-model="new_detalles[index].fecha_laborada"
+                            v-bind:id="'new_detalle.fecha_laborada'"
+                            v-model="new_detalle.fecha_laborada"
                             type="hidden"
                     />
                     <input
                             type="text"
-                            v-on:focusout="validateDecimal(new_detalles[index])"
                             min="0"
                             max="24"
                             maxlength="5"
-                            v-bind:id="'new_detalles[' + index + '].horas_laboradas'"
-                            v-model="new_detalles[index].horas_laboradas"
+                            v-on:focusout="validateDecimal(new_detalle)"
+                            v-bind:id="new_detalle.horas_laboradas"
+                            v-model="new_detalle.horas_laboradas"
                             class="form-control text-center"
                     />
                 </td>
@@ -171,8 +171,6 @@
             return {
                 fecha_laborada: ultimas_fechas[index],
                 horas_laboradas: '0.00',
-                horas: '',
-                minutos: '',
             }
         });
     }
@@ -232,12 +230,14 @@
                     this.new_horas_laboradas.ultimas_horas = this.new_detalles;
                     horas_laboradas_for_save.push(this.new_horas_laboradas);
                 }
-                this.$http.post('/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: horas_laboradas_for_save}).then(response => {
+                this.$http.post('/timekeepers/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: horas_laboradas_for_save}).then(response => {
                     var message = '';
-                    this.horas_laboradas = _.merge(this.horas_laboradas, response.data);
                     if (response.data.add) {
                         message = 'Horas laboradas ingresadas correctamente';
                         toastr.success(message, 'Exito!');
+                        var temp = _.merge(this.horas_laboradas, response.data);
+                        this.horas_laboradas = Object.assign({}, this.horas_laboradas, temp);
+
                     } else if (response.data.update) {
                         message = 'Horas laboradas actualizadas correctamente';
                         toastr.success(message, 'Exito!');

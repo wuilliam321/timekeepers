@@ -16,7 +16,7 @@ require('laravel-elixir-vue-2');
 elixir(mix => {
     Elixir.webpack.mergeConfig({
         module: {
-            rules: [
+            loaders: [
                 {include: /\.json$/, loaders: ["json-loader"]}
             ]
         },
