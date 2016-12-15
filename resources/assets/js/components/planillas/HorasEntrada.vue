@@ -77,6 +77,7 @@
 </template>
 
 <script>
+    import {BASE_URL} from '../../config.js'
     export default {
         /*
          * The component's data.
@@ -121,7 +122,7 @@
             },
 
             saveHorasEntrada: function (event) {
-                this.$http.post('/timekeepers/api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
+                this.$http.post(BASE_URL + 'api/horas_entrada/' + this.colaborador_id, {horas_entrada: this.horas_entrada}).then(response => {
                     var message = '';
                     this.horas_entrada = _.merge(this.horas_entrada, response.data);
                     if (response.data.add) {

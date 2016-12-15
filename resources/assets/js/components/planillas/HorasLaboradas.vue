@@ -154,6 +154,7 @@
 </template>
 
 <script>
+    import {BASE_URL} from '../../config.js'
     import RemoveHora from './RemoveHora.vue'
     function initializeNewHorasLaboradas() {
         return {
@@ -230,7 +231,7 @@
                     this.new_horas_laboradas.ultimas_horas = this.new_detalles;
                     horas_laboradas_for_save.push(this.new_horas_laboradas);
                 }
-                this.$http.post('/timekeepers/api/horas_laboradas/' + this.planilla_id, {horas_laboradas: horas_laboradas_for_save}).then(response => {
+                this.$http.post(BASE_URL + 'api/horas_laboradas/' + this.planilla_id, {horas_laboradas: horas_laboradas_for_save}).then(response => {
                     var message = '';
                     if (response.data.add) {
                         message = 'Horas laboradas ingresadas correctamente';

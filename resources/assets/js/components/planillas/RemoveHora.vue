@@ -20,6 +20,7 @@
 </template>
 
 <script>
+    import {BASE_URL} from '../../config.js'
     export default {
         /*
          * The component's data.
@@ -53,7 +54,7 @@
 
             remove: function() {
                 if (confirm('Esta seguro?')) {
-                    this.$http.delete('/timekeepers/api/horas_laboradas/' + this.hora_id).then(response => {
+                    this.$http.delete(BASE_URL + '/timekeepers/api/horas_laboradas/' + this.hora_id).then(response => {
                         toastr.success('Horas laboradas eliminadas correctamente', 'Exito!');
                         this.eventHub.$emit('horas_laboradas.delete', this.planilla_id, this.hora_id);
                     }, (response) => {

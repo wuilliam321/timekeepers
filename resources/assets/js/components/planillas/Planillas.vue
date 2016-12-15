@@ -206,6 +206,7 @@
 </template>
 
 <script>
+    import {BASE_URL} from '../../config.js'
     import HorasEntrada from './HorasEntrada.vue'
     import HorasLaboradas from './HorasLaboradas.vue'
 
@@ -277,7 +278,7 @@
              */
             getPlanillas() {
                 var params = $.param(this.default_paginate_options);
-                var url = '/timekeepers/api/planillas?' + params;
+                var url = BASE_URL + 'api/planillas?' + params;
                 this.runGetPlanillasRequest(url);
             },
 
@@ -318,7 +319,7 @@
             getCuentasCosto() {
                 if (!this.cuentas_costo.length) {
                     var vm = this;
-                    this.$http.get('/timekeepers/api/cuentas_costo').then(response => {
+                    this.$http.get(BASE_URL + 'api/cuentas_costo').then(response => {
                         Vue.set(vm, 'cuentas_costo', response.data);
                     });
                 }
@@ -327,7 +328,7 @@
             getBeneficios() {
                 if (!this.beneficios.length) {
                     var vm = this;
-                    this.$http.get('/timekeepers/api/beneficios').then(response => {
+                    this.$http.get(BASE_URL + 'api/beneficios').then(response => {
                         Vue.set(vm, 'beneficios', response.data);
                     });
                 }
@@ -336,7 +337,7 @@
             getCuentasBeneficios() {
                 if (!this.cuentas_beneficios.length) {
                     var vm = this;
-                    this.$http.get('/timekeepers/api/cuentas_beneficios').then(response => {
+                    this.$http.get(BASE_URL + 'api/cuentas_beneficios').then(response => {
                         Vue.set(vm, 'cuentas_beneficios', response.data);
                     });
                 }
@@ -348,7 +349,7 @@
                 this.sortKey = key;
                 this.default_paginate_options.sort_key = this.sortKey;
                 var params = $.param(this.default_paginate_options);
-                var url = '/timekeepers/api/planillas?' + params +  '&page=' + this.currentPage;
+                var url = BASE_URL + 'api/planillas?' + params +  '&page=' + this.currentPage;
                 this.runGetPlanillasRequest(url);
             },
 
@@ -369,14 +370,14 @@
             lastPage() {
                 this.currentPage = this.last_page;
                 var params = $.param(this.default_paginate_options) + '&page=' + this.last_page;
-                var url = '/timekeepers/api/planillas?' + params;
+                var url = BASE_URL + 'api/planillas?' + params;
                 this.runGetPlanillasRequest(url);
             },
 
             viewPage(page) {
                 this.currentPage = page;
                 var params = $.param(this.default_paginate_options) + '&page=' + page;
-                var url = '/timekeepers/api/planillas?' + params;
+                var url = BASE_URL + 'api/planillas?' + params;
                 this.runGetPlanillasRequest(url);
             },
 
@@ -402,7 +403,7 @@
                 var codigo = $(event.currentTarget).val();
                 this.default_paginate_options.codigo = codigo;
                 var params = $.param(this.default_paginate_options);
-                var url = '/timekeepers/api/planillas?' + params;
+                var url = BASE_URL + 'api/planillas?' + params;
                 this.runGetPlanillasRequest(url);
             },
 
@@ -410,7 +411,7 @@
                 var text = $(event.target).val();
                 this.default_paginate_options.text = text;
                 var params = $.param(this.default_paginate_options);
-                var url = '/timekeepers/api/planillas?' + params;
+                var url = BASE_URL + 'api/planillas?' + params;
                 this.runGetPlanillasRequest(url);
             }, 300),
 
@@ -418,7 +419,7 @@
 
                 if (!this.planillas_for_filter.length) {
                     var vm = this;
-                    this.$http.get('/timekeepers/api/planillas/filters').then(response => {
+                    this.$http.get(BASE_URL + 'api/planillas/filters').then(response => {
                         vm.planillas_for_filter = _.uniq(_.map(response.body.data, function(planilla) {
                             return planilla.codigo;
                         }));
