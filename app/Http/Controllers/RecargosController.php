@@ -12,35 +12,6 @@ class RecargosController extends Controller
 {
     public function run()
     {
-        $horas = [
-            'hora_de_entrada' => [
-                '7',
-                '7',
-                '7',
-                '7',
-                '7',
-                '7',
-                '7',
-            ],
-            'horas_laboradas' => [
-                '8',
-                '8',
-                '8',
-                '8',
-                '8',
-                '8',
-                '8',
-            ],
-            'dia_nacional' => [
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-                0,
-            ]
-        ];
         $colaborador_id = '5655'; // Jose Hernandez
         $horas = $this->getUltimaSemana($colaborador_id);
         $this->process($this->prepareToBeProcessed($horas));
@@ -63,6 +34,15 @@ class RecargosController extends Controller
         };
 
         return $horas;
+    }
+
+    public function getHorasInDecimal($hora)
+    {
+        $hora = explode(':', $hora);
+        $minutos = intval($hora[1]);
+        $hora = intval($hora[0]);
+        $minutos = $minutos / 60;
+        return $hora + $minutos;
     }
 
     public function getHorasLaboradas($colaborador_id)
@@ -99,15 +79,6 @@ class RecargosController extends Controller
             'horas_laboradas' => array_flatten($horas['horas_laboradas']),
             'dia_nacional' => array_flatten($horas['dia_nacional'])
         ];
-    }
-
-    public function getHorasInDecimal($hora)
-    {
-        $hora = explode(':', $hora);
-        $minutos = intval($hora[1]);
-        $hora = intval($hora[0]);
-        $minutos = $minutos / 60;
-        return $hora + $minutos;
     }
 
     public function process($horas)
