@@ -20,7 +20,7 @@ class HorasLaboradasDetalle extends Model
 
     public function getUltimasByHorasLaboradaId($id, $from, $to)
     {
-        return $this->where('horas_laboradas_id', '=', $id)
+        return $this->where('horas_laborada_id', '=', $id)
             ->where('fecha_laborada', '>=', $from)
             ->where('fecha_laborada', '<=', $to)
             ->orderBy('fecha_laborada', 'asc')

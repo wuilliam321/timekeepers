@@ -18,8 +18,8 @@ class CreateHorasLaboradasDetallesTable extends Migration
             $table->date('fecha_laborada');
             $table->float('horas_laboradas');
 
-            $table->integer('horas_laboradas_id')->unsigned();
-            $table->foreign('horas_laboradas_id')->references('id')->on('horas_laboradas')
+            $table->integer('horas_laborada_id')->unsigned();
+            $table->foreign('horas_laborada_id')->references('id')->on('horas_laboradas')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
 
@@ -35,7 +35,7 @@ class CreateHorasLaboradasDetallesTable extends Migration
     public function down()
     {
         Schema::drop('horas_laboradas_detalles', function (Blueprint $table) {
-            $table->dropForeign(['horas_laboradas_id']);
+            $table->dropForeign(['horas_laborada_id']);
         });
     }
 }

@@ -81,7 +81,7 @@ class HorasLaboradasController extends Controller
 
     public function saveDetalles(&$horasLaborada, $horas_laboradas, &$returnMsg)
     {
-        $horas_laboradas_id = $horasLaborada->id;
+        $horas_laborada_id = $horasLaborada->id;
         $detalles = $horas_laboradas['ultimas_horas'];
         $ultimas_horas = [];
         foreach ($detalles as $key => $detalle) {
@@ -89,7 +89,7 @@ class HorasLaboradasController extends Controller
             if (array_key_exists('id', $detalle)) {
                 $horaDetalle = $horaDetalle->getById($detalle['id']);
             }
-            $horaDetalle->horas_laboradas_id = $horas_laboradas_id;
+            $horaDetalle->horas_laborada_id = $horas_laborada_id;
             $horaDetalle->fecha_laborada = $detalle['fecha_laborada'];
             $horaDetalle->horas_laboradas = floatval($detalle['horas_laboradas']);
             $dirtyFields = ($horaDetalle->isDirty()) ? $horaDetalle->getDirty() : [];

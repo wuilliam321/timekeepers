@@ -79,7 +79,7 @@
                             v-if="ultima_hora.id"
                     />
                     <input
-                            v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laboradas_id'"
+                            v-bind:id="'ultima_hora[' + ultima_hora.id + '].horas_laborada_id'"
                             v-model="hora.id"
                             type="hidden"
                     />

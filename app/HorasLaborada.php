@@ -23,4 +23,9 @@ class HorasLaborada extends Model
         return $this->where($this->table . '.planilla_id', '=', $planilla_id)
             ->get();
     }
+
+    public function horas_laboradas_detalles()
+    {
+        return $this->hasMany('App\HorasLaboradasDetalle');
+    }
 }
