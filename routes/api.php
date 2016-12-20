@@ -50,5 +50,9 @@ Route::get('/cuentas_beneficios', 'CuentasBeneficiosController@getAllCuentas')
 Route::get('/procesar_horas', 'RecargosController@run');
 
 /** Feriados **/
-Route::get('/feriados', 'FeriadosController@getFeriados')/*
-    ->middleware('auth:api')*/;
+Route::get('/feriados', 'FeriadosController@getFeriados');
+Route::post('/feriados', 'FeriadosController@createFeriado');
+Route::put('/feriados/{id}', 'FeriadosController@updateFeriado');
+Route::delete('/feriados/{id}', 'FeriadosController@deleteFeriado');
+/*
+    ->middleware('auth:api')*/

@@ -30,6 +30,7 @@ elixir(mix => {
         'resources/assets/vendor/animate/animate.css',
         'resources/assets/vendor/font-awesome/css/font-awesome.css',
         'node_modules/toastr/build/toastr.min.css',
+        'node_modules/bootstrap-datepicker/dist/css/bootstrap-datepicker3.css'
     ], 'public/css/vendor.css', './');
     mix.webpack([
         'app.js',

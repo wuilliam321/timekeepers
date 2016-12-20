@@ -23,26 +23,16 @@
 
 <template>
     <div>
-        <div class="modal inmodal fade" id="edit-feriado" tabindex="-1" role="dialog"  aria-hidden="true">
-            <div class="modal-dialog modal-sm">
-                <form>
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                            <h4 class="modal-title">Editar Feriado</h4>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="fecha">Fecha</label>
-                                <input type="date" class="form-control" id="fecha" name="fecha" placeholder="Selecciona la fecha feriada" v-model="currentFeriado.fecha">
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary"><i class="fa fa-floppy-o"></i> Save</button>
-                        </div>
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <div class="row">
+                    <div class="col-xs-9">
+                        <h2>Dias Feriados</h2>
                     </div>
-                </form>
+                    <div class="col-xs-3 text-right"><br />&nbsp;
+                        <a href="#" class="btn btn-primary" v-on:click="newFeriado = {fecha: ''}"  data-toggle="modal" data-target="#add-feriado"><i class="fa fa-plus"></i> Nuevo Dia Feriado</a>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -75,8 +65,8 @@
                             </td>
                             <td>
                                 <div class="btn-group">
-                                    <div class="btn btn-default" v-on:click="currentFeriado = feriado" data-toggle="modal" data-target="#edit-feriado"><i class="fa fa-pencil"></i></div>
-                                    <div class="btn btn-default"><i class="fa fa-trash"></i></div>
+                                    <div class="btn btn-default" v-on:click="currentFeriado = _.clone(feriado)" data-toggle="modal" data-target="#edit-feriado"><i class="fa fa-pencil"></i></div>
+                                    <div class="btn btn-default" v-on:click="deleteFeriado(feriado.id)"><i class="fa fa-trash"></i></div>
                                 </div>
                             </td>
                         </tr>
@@ -105,6 +95,56 @@
                 </nav>
             </div>
         </div>
+
+        <!-- Start edit modal -->
+        <div class="modal inmodal fade" id="edit-feriado" tabindex="-1" role="dialog"  aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <form>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">Editar Feriado</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group date">
+                                <label for="fecha">Fecha</label>
+                                <input type="text" class="form-control" id="fecha" name="fecha" placeholder="Selecciona la fecha feriada" v-model="currentFeriado.fecha" v-bind:value="currentFeriado.fecha" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" v-on:click="currentFeriado.fecha && updateFeriado()" v-bind:class="{ disabled: !currentFeriado.fecha }"><i class="fa fa-floppy-o"></i> Update</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--End edit modal-->
+
+        <!--Start add modal-->
+        <div class="modal inmodal fade" id="add-feriado" tabindex="-1" role="dialog"  aria-hidden="true">
+            <div class="modal-dialog modal-sm">
+                <form>
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                            <h4 class="modal-title">Nuevo Feriado</h4>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group date">
+                                <label for="fecha">Fecha</label>
+                                <input type="text" class="form-control" id="fecha" name="fecha" placeholder="Selecciona la fecha feriada" v-model="newFeriado.fecha" v-bind:value="newFeriado.fecha" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-white" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" v-on:click="newFeriado.fecha && saveFeriado()" v-bind:class="{ disabled: !newFeriado.fecha }"><i class="fa fa-floppy-o"></i> Save</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <!--End create modal-->
     </div>
 </template>
 
@@ -131,6 +171,9 @@
                 eventHub: new Vue(),
                 isSaving: false,
                 currentFeriado: {},
+                newFeriado: {
+                    fecha: ''
+                },
             };
         },
 
@@ -164,8 +207,15 @@
                 });
 
                 $('#edit-feriado').on('hidden.bs.modal', function (e) {
-                    console.log(vm.currentFeriado.fecha);
                     vm.currentFeriado = {};
+                });
+
+                $('#add-feriado .date input').on("changeDate", function() {
+                    vm.newFeriado.fecha = $(this).val();
+                })
+
+                $('#edit-feriado .date input').on("changeDate", function() {
+                    vm.currentFeriado.fecha = $(this).val();
                 })
             },
 
@@ -193,16 +243,6 @@
                     this.feriados = response.body.data;
                     this.next_url = this.prepareUrl(response.body.next_page_url);
                     this.prev_url = this.prepareUrl(response.body.prev_page_url);
-//
-//                    var vm = this;
-//                    vm.eventHub.$on('horas_laboradas.delete', function(planilla_id, id) {
-//                        var planilla = _.find(vm.planillas, function(planilla) {
-//                            return planilla.id === planilla_id;
-//                        });
-//                        planilla.horas_laboradas = _.filter(planilla.horas_laboradas, function(hora) {
-//                            return hora.id !== id;
-//                        });
-//                    });
                 });
             },
 
@@ -261,6 +301,72 @@
                     this.runGetFeriadosRequest(url);
                 }
             },
+
+            saveFeriado() {
+                var vm = this;
+                var feriado = vm.newFeriado;
+                if (!vm.newFeriado.fecha) {
+                    return;
+                }
+                var url = BASE_URL + 'api/feriados/';
+                this.$http.post(url, feriado).then(response => {
+                    console.log(response);
+                    if (response.status === 200 && response.ok) {
+                        vm.getFeriados();
+                        $('#add-feriado').modal('hide')
+                    }
+                    vm.newFeriado = {};
+                    toastr.success('Fecha creada exitosamente','Excelente!');
+                }).catch(response => {
+                    if (response.status === 409 && !response.ok) {
+                        toastr.error('La fecha ya se encuentra registrada','Error!');
+                    }
+                });
+            },
+
+            updateFeriado() {
+                var vm = this;
+                var feriado = vm.currentFeriado;
+                if (!vm.currentFeriado.fecha) {
+                    return;
+                }
+                var url = BASE_URL + 'api/feriados/' + feriado.id;
+                this.$http.put(url, feriado).then(response => {
+                    console.log(response);
+                    if (response.status === 200 && response.ok) {
+                        vm.getFeriados();
+                        $('#edit-feriado').modal('hide')
+                    }
+                    vm.curretFeriado = {};
+                    toastr.success('Fecha actualizada exitosamente','Excelente!');
+                }).catch(response => {
+                    if (response.status === 409 && !response.ok) {
+                        toastr.error('La fecha ya se encuentra registrada','Error!');
+                    }
+                });
+            },
+
+            deleteFeriado(id) {
+                var vm = this;
+                var feriado = vm.currentFeriado;
+                if (!id) {
+                    return;
+                }
+                var url = BASE_URL + 'api/feriados/' + id;
+                if (confirm('Esta seguro?')) {
+                    this.$http.delete(url, feriado).then(response => {
+                        console.log(response);
+                        if (response.status === 200 && response.ok) {
+                            vm.getFeriados();
+                        }
+                        toastr.success('Fecha eliminada exitosamente','Excelente!');
+                    }).catch(response => {
+                        if (response.status === 409 && !response.ok) {
+                            toastr.error('La fecha no pudo ser eliminada', 'Error!');
+                        }
+                    });
+                }
+            }
         },
     }
 </script>

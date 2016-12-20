@@ -23,4 +23,47 @@ class FeriadosController extends Controller
         }
         return Feriado::orderBy($sort_key, $sort_direction)->paginate($this->perPage);
     }
+
+    public function createFeriado(Request $request)
+    {
+        $data = $request->all();
+        $feriado = Feriado::where('fecha', '=', $data['fecha'])->get();
+        if (sizeof($feriado)) {
+            abort(409, 'Duplicated Entry');
+        } else {
+            $feriado = new Feriado();
+            $feriado->fecha = $data['fecha'];
+            $feriado->save();
+            return $feriado;
+        }
+    }
+
+    public function updateFeriado(Request $request, $id)
+    {
+        $data = $request->all();
+        $feriado = Feriado::where('fecha', '=', $data['fecha'])->get();
+        if (sizeof($feriado)) {
+            abort(409, 'Duplicated Entry');
+        } else {
+            $feriado = Feriado::find($id);
+            if ($feriado) {
+                $feriado->fecha = $data['fecha'];
+                $feriado->save();
+            }
+            return $feriado;
+        }
+    }
+
+    public function deleteFeriado(Request $request, $id)
+    {
+        if ($request->isMethod('delete') && $id) {
+            $deleted = Feriado::where('id', '=', $id)->delete();
+            if ($deleted) {
+                return response('Deleted', 200);
+            } else {
+                abort(409, 'Duplicated Entry');
+            }
+        }
+        abort(401);
+    }
 }

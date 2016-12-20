@@ -5,6 +5,7 @@
  */
 
 require('./bootstrap');
+require('bootstrap-datepicker');
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
@@ -60,6 +61,8 @@ Vue.component(
 const app = new Vue({
     el: '#wrapper',
 });
+
+moment.tz.setDefault("America/Panama");
 /*
  *
  *   INSPINIA - Responsive Admin Theme
