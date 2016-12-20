@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\HorasEntrada;
 use App\HorasLaborada;
+use App\HorasLaboradasDetalle;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
@@ -14,23 +16,29 @@ class RecargosController extends Controller
     {
         $colaborador_id = '5655'; // Jose Hernandez
         $horas = $this->getUltimaSemana($colaborador_id);
+        print_r($this->prepareToBeProcessed($horas));die;
         $this->process($this->prepareToBeProcessed($horas));
     }
 
     public function getUltimaSemana($colaborador_id)
     {
-        $ultima_semana['hora_de_entrada'] = $this->getHorasEntrada($colaborador_id);
-        $ultima_semana['horas_laboradas'] = $this->getHorasLaboradas($colaborador_id);
-        $ultima_semana['dia_nacional'] = $this->getDiasNacionales($ultima_semana['hora_de_entrada']);
-        return $ultima_semana;
+        $ultima_semana = $this->getHorasLaboradas($colaborador_id);
+        print_r($ultima_semana);die;
+//        $ultima_semana['hora_de_entrada'] = $this->getHorasEntrada($colaborador_id);
+//        $ultima_semana['horas_laboradas'] = $this->getHorasLaboradas($colaborador_id);
+//        $ultima_semana['dia_nacional'] = $this->getDiasNacionales($ultima_semana['hora_de_entrada']);
+//        return $ultima_semana;
     }
 
     public function getHorasEntrada($colaborador_id)
     {
         $horas = [];
-        $horas_entrada = HorasEntrada::where('colaborador_id', $colaborador_id)->get();
+        $horas_entrada = HorasEntrada::where('colaborador_id', $colaborador_id)
+            ->orderBy('fecha_entrada')
+            ->where('fecha_entrada', '>', Carbon::now()->subWeek()->toDateTimeString())
+            ->get();
         foreach ($horas_entrada as $hora_entrada) {
-            $horas[$hora_entrada->fecha_entrada][] = $this->getHorasInDecimal($hora_entrada->hora_entrada);
+            $horas[$hora_entrada->fecha_entrada][] = /*$hora_entrada->id . ' = ' . */$this->getHorasInDecimal($hora_entrada->hora_entrada);
         };
 
         return $horas;
@@ -47,18 +55,31 @@ class RecargosController extends Controller
 
     public function getHorasLaboradas($colaborador_id)
     {
-        $horas = [];
-        $horas_laboradas = HorasLaborada::with('horas_laboradas_detalles')
-            ->where('colaborador_id', $colaborador_id)
+//        $horas = [];
+//        $horas_laboradas_detalles = HorasLaborada::join('horas_laboradas_detalles', 'horas_laboradas.id', 'horas_laboradas_detalles.horas_laborada_id')
+//            ->where('horas_laboradas_detalles.fecha_laborada', '>', Carbon::now()->subWeek()->toDateTimeString())
+//            ->orderBy('horas_laboradas_detalles.fecha_laborada')
+//            ->select('horas_laboradas.*', 'horas_laboradas_detalles.fecha_laborada', 'horas_laboradas_detalles.horas_laboradas')
+//            ->where('horas_laboradas.colaborador_id', $colaborador_id)
+//            ->get();
+//
+//        foreach ($horas_laboradas_detalles as $horas_laboradas_detalle) {
+//            $horas[$horas_laboradas_detalle->fecha_laborada][] = $horas_laboradas_detalle->horas_laboradas;
+//        };
+//
+//        return $horas;
+        $horas_entradas = $this->getHorasEntrada($colaborador_id);
+        $horas_laboradas_detalles = HorasLaboradasDetalle::join('horas_laboradas', 'horas_laboradas_detalles.horas_laborada_id', 'horas_laboradas.id')
+            ->where('horas_laboradas_detalles.fecha_laborada', '>', Carbon::now()->subWeek()->toDateTimeString())
+            ->orderBy('horas_laboradas_detalles.fecha_laborada')
+            ->select('horas_laboradas.*', 'horas_laboradas_detalles.fecha_laborada', 'horas_laboradas_detalles.horas_laboradas')
+            ->where('horas_laboradas.colaborador_id', $colaborador_id)
             ->get();
+        foreach ($horas_laboradas_detalles as $detalle) {
+            print_r($detalle->toArray());
+        }
+        die;
 
-        foreach ($horas_laboradas as $hora_laborada) {
-            foreach ($hora_laborada->horas_laboradas_detalles as $horas_laboradas_detalle) {
-                $horas[$horas_laboradas_detalle->fecha_laborada][] = $horas_laboradas_detalle->horas_laboradas;
-            }
-        };
-
-        return $horas;
     }
 
     public function getDiasNacionales($horas_entrada)
@@ -74,6 +95,20 @@ class RecargosController extends Controller
 
     public function prepareToBeProcessed($horas)
     {
+//        print_r($horas);
+//        echo '<hr>';
+//        $data = [];
+//        $data[]['hora_de_entrada'] = $horas['hora_de_entrada'];
+//        $fechas = array_keys($horas['hora_de_entrada']);
+//        foreach ($fechas as $fecha) {
+//            echo $fecha . '<br>';
+//            foreach ($horas['horas_laboradas'][$fecha] as $horas_laborada) {
+//                echo '=>' . $horas_laborada . '<br>';
+//            }
+//        }
+//        echo '<hr>';
+//        print_r($data);
+//        die;
         return [
             'hora_de_entrada' => array_flatten($horas['hora_de_entrada']),
             'horas_laboradas' => array_flatten($horas['horas_laboradas']),

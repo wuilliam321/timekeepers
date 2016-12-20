@@ -18,6 +18,7 @@ class CreateHorasEntradaTable extends Migration
             $table->date('fecha_entrada');
             $table->text('hora_entrada', 5);
             $table->integer('colaborador_id')->unsigned();
+//            $table->unique(['colaborador_id', 'fecha_entrada'], 'hora_entrada_unique');
             $table->foreign('colaborador_id')->references('id')->on('colaboradores')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
@@ -35,6 +36,7 @@ class CreateHorasEntradaTable extends Migration
     {
         Schema::drop('horas_entrada', function (Blueprint $table) {
             $table->dropForeign(['colaborador_id']);
+//            $table->dropUnique('hora_entrada_unique');
         });
     }
 }

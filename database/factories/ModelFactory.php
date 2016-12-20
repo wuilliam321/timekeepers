@@ -27,29 +27,41 @@ $factory->define(App\CuentasBeneficio::class, function (Faker\Generator $faker) 
     ];
 });
 
-//$factory->define(App\HorasEntrada::class, function (Faker\Generator $faker) {
-//    $date = $faker->dateTimeBetween('-10 days', 'now');
-//    return [
-//        'colaborador_id' => $faker->numberBetween(1,10),
-//        'fecha_entrada' => $date,
-//        'hora_entrada' => $faker->numberBetween(0, 23) . ':' . $faker->numberBetween(0,60),
-//    ];
-//});
-//
-//$factory->define(App\HorasLaborada::class, function (Faker\Generator $faker) {
-//    return [
-//        'colaborador_id' => $faker->numberBetween(1, 10),
-//        'planilla_id' => $faker->numberBetween(1, 30),
-//        'cuenta_costo_id' => $faker->numberBetween(1, 50),
-//        'beneficio_id' => $faker->numberBetween(1, 40),
-//        'cuenta_beneficio_id' => $faker->numberBetween(1, 50),
-//    ];
-//});
-//
-//$factory->define(App\HorasLaboradasDetalle::class, function (Faker\Generator $faker) {
-//    return [
-//        'horas_laborada_id' => $faker->numberBetween(1, 30),
-//        'fecha_laborada' => $faker->dateTimeBetween('-10 days', 'now'),
-//        'horas_laboradas' => $faker->numberBetween(1, 8),
-//    ];
-//});
+$factory->define(App\HorasEntrada::class, function (Faker\Generator $faker) {
+    $date = $faker->dateTimeThisMonth();
+    return [
+        'colaborador_id' => $faker->randomElement([
+            5655, 6287/*, 7574, 8236, 6161, 6654, 8936, 5960, 8703, 8749,
+            7965, 8413, 8121, 8100, 7735, 6441, 7775, 8362, 7960, 5946*/
+        ]),
+        'fecha_entrada' => $date,
+        'hora_entrada' => $faker->numberBetween(7, 9) . ':' . $faker->numberBetween(0,59),
+    ];
+});
+
+$factory->define(App\HorasLaborada::class, function (Faker\Generator $faker) {
+    return [
+        'colaborador_id' => $faker->randomElement([
+            5655/*, 6287, 7574, 8236, 6161, 6654, 8936, 5960, 8703, 8749,
+            7965, 8413, 8121, 8100, 7735, 6441, 7775, 8362, 7960, 5946*/
+        ]),
+        'planilla_id' => 1/*$faker->numberBetween(1, 20)*/,
+        'cuenta_costo_id' => $faker->numberBetween(1, 10),
+        'beneficio_id' => $faker->numberBetween(1, 5),
+        'cuenta_beneficio_id' => $faker->numberBetween(1, 5),
+    ];
+});
+
+$factory->define(App\HorasLaboradasDetalle::class, function (Faker\Generator $faker) {
+    return [
+        'horas_laborada_id' => $faker->numberBetween(1, 3),
+        'fecha_laborada' => $faker->unique()->dateTimeThisMonth(),
+        'horas_laboradas' => $faker->numberBetween(4, 12),
+    ];
+});
+
+$factory->define(App\Feriado::class, function (Faker\Generator $faker) {
+    return [
+        'fecha' => $faker->dateTimeThisMonth(),
+    ];
+});

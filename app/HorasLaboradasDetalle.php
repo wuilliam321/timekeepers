@@ -26,4 +26,9 @@ class HorasLaboradasDetalle extends Model
             ->orderBy('fecha_laborada', 'asc')
             ->get();
     }
+
+    public function horas_laborada()
+    {
+        return $this->belongsTo('App\HorasLaborada');
+    }
 }

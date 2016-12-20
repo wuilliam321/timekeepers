@@ -2,7 +2,7 @@
 
 use Illuminate\Database\Seeder;
 
-class CuentasBeneficioTableSeeder extends Seeder
+class FeriadosTableSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -11,6 +11,6 @@ class CuentasBeneficioTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\CuentasBeneficio::class, 5)->create();
+        factory(App\Feriado::class, 10)->create();
     }
 }

@@ -38,6 +38,14 @@ Vue.component(
 );
 
 /**
+ * Feriados components
+ */
+Vue.component(
+    'feriados-index',
+    require('./components/administracion/Feriados.vue')
+);
+
+/**
  * Third party components
  */
 
