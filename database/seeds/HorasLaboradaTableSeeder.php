@@ -11,6 +11,6 @@ class HorasLaboradaTableSeeder extends Seeder
      */
     public function run()
     {
-        factory(App\HorasLaborada::class, 3)->create();
+        factory(App\HorasLaborada::class, 200)->create();
     }
 }
