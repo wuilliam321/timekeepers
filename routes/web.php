@@ -11,9 +11,15 @@
 |
 */
 
-
 Route::get('/', 'PlanillasController@index')->name("main");
 Auth::routes();
+Route::get('/register', function () {
+    return redirect('/login');
+});
+Route::get('/password/reset', function () {
+    return redirect('/login');
+});
+
 Route::get('/minor', 'HomeController@minor')->name("minor");
 Route::get('/planillas', 'PlanillasController@index')->name("planillas");
 Route::get('/logger', 'HorasLogsController@view')->name('logger');
