@@ -6,12 +6,16 @@ use App\Feriado;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class FeriadosController extends Controller
 {
     protected $perPage = 10;
     public function getFeriados()
     {
+        if (Auth::user()->rol !== 'admin') {
+            abort(401, 'You have not enough permission to access this site');
+        }
         $paginate_options = $_GET;
         $sort_direction = 'asc';
         $sort_key = 'fecha';
@@ -26,6 +30,9 @@ class FeriadosController extends Controller
 
     public function createFeriado(Request $request)
     {
+        if (Auth::user()->rol !== 'admin') {
+            abort(401, 'You have not enough permission to access this site');
+        }
         $data = $request->all();
         $feriado = Feriado::where('fecha', '=', $data['fecha'])->get();
         if (sizeof($feriado)) {
@@ -40,6 +47,9 @@ class FeriadosController extends Controller
 
     public function updateFeriado(Request $request, $id)
     {
+        if (Auth::user()->rol !== 'admin') {
+            abort(401, 'You have not enough permission to access this site');
+        }
         $data = $request->all();
         $feriado = Feriado::where('fecha', '=', $data['fecha'])->get();
         if (sizeof($feriado)) {
@@ -56,6 +66,9 @@ class FeriadosController extends Controller
 
     public function deleteFeriado(Request $request, $id)
     {
+        if (Auth::user()->rol !== 'admin') {
+            abort(401, 'You have not enough permission to access this site');
+        }
         if ($request->isMethod('delete') && $id) {
             $deleted = Feriado::where('id', '=', $id)->delete();
             if ($deleted) {

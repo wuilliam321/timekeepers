@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INSPINIA - @yield('title') </title>
+    <title>Sistema de timekeepers de Ingenier&iacute;a RM - @yield('title') </title>
 
 
     <link rel="stylesheet" href="/css/vendor.css" />

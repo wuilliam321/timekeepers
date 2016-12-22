@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class AdministracionController extends Controller
 {
@@ -25,6 +26,10 @@ class AdministracionController extends Controller
      */
     public function feriados()
     {
-        return view('administracion.feriados');
+        if (Auth::user()->rol === 'admin') {
+            return view('administracion.feriados');
+        } else {
+            abort(401, 'You have not enough permission to access this site');
+        }
     }
 }
