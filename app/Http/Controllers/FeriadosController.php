@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Feriado;
 use Illuminate\Http\Request;
-
 use App\Http\Requests;
 use Illuminate\Support\Facades\Auth;
 
