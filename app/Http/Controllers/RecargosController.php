@@ -6,6 +6,8 @@ use App\Colaboradore;
 use App\Feriado;
 use App\HorasEntrada;
 use App\HorasLaborada;
+use App\HorasLaboradasRecargo;
+use App\SemanasProcesada;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 
@@ -16,17 +18,18 @@ class RecargosController extends Controller
 {
     public function run()
     {
+        $ultima_semana = $this->getUltimaSemana();
+
+        // Check if the current week has been processed in the past
+        $dt = Carbon::parse($ultima_semana[0]);
+        $numero_semana = $dt->weekOfYear;
+        $this->storeSemanaProcesada($numero_semana);
+
         $colaboradores = Colaboradore::all();
         foreach ($colaboradores as $colaborador) {
-            $ultima_semana = $this->getUltimaSemana();
             $horas_entrada = $this->getHorasEntrada($colaborador->id, $ultima_semana);
             $horas_laboradas = $this->getSumaHorasLaboradas($colaborador->id, $ultima_semana);
             $dias_nacionales = $this->getDiasNacionales($ultima_semana);
-//            echo "<pre>";
-//            print_r($horas_entrada);
-//            print_r($horas_laboradas);
-//            print_r($dias_nacionales);
-//            echo "</pre>";
 //            echo '<h2>Colaborador: ' . $colaborador->nombre . '</h2>';
 //            $this->printCabeceras();
             $tiempo_compensatorio = 0;
@@ -57,14 +60,13 @@ class RecargosController extends Controller
                 $todas_horas_laboradas = $this->getHorasLaboradas($colaborador->id, $ultima_semana);
                 $data_for_save = $this->prepareData($data_for_output, $todas_horas_laboradas);
                 $this->storeRecargos($data_for_save);
-                die;
 //                foreach ($data_for_output as $fecha) {
 //                    $this->printBody($fecha);
 //                }
 
             }
 
-            $this->printPie();
+//            $this->printPie();
         }
     }
 
@@ -271,6 +273,17 @@ class RecargosController extends Controller
         echo("</table>");
     }
 
+    public function storeSemanaProcesada($semana)
+    {
+        $semana_procesada = SemanasProcesada::where('semana', '=', $semana)->get();
+        if (sizeof($semana_procesada->toArray()) > 0) {
+            abort(409, 'La semana ya ha sido procesada');
+        }
+        $semana_procesada = new SemanasProcesada();
+        $semana_procesada->semana = $semana;
+        $semana_procesada->save();
+    }
+
     public function getUltimaSemana()
     {
         $dt = new Carbon('last sunday');
@@ -387,12 +400,24 @@ class RecargosController extends Controller
         return $data;
     }
 
-    public function storeRecargos($data)
+    public function storeRecargos($recargos)
     {
-        echo "<pre>";
-        print_r($data);
-        echo "</pre>";
-        die;
+
+        foreach ($recargos as $recargo) {
+            foreach ($recargo as $data) {
+                $horas_recargo = new HorasLaboradasRecargo();
+                $horas_recargo->fecha_laborada = $data['fecha_laborada'];
+                $horas_recargo->horas_laboradas = $data['horas_recargo'];
+                $horas_recargo->codigo_recargo = $data['codigo'];
+                $horas_recargo->horas_laborada_id = $data['id'];
+                $horas_recargo->colaborador_id = $data['colaborador_id'];
+                $horas_recargo->planilla_id = $data['planilla_id'];
+                $horas_recargo->cuenta_costo_id = $data['cuenta_costo_id'];
+                $horas_recargo->beneficio_id = $data['beneficio_id'];
+                $horas_recargo->cuenta_beneficio_id = $data['cuenta_beneficio_id'];
+                $horas_recargo->save();
+            }
+        }
     }
 
     public function getDiasNacionales($semana)
