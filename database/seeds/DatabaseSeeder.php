@@ -22,5 +22,6 @@ class DatabaseSeeder extends Seeder
         $this->call(HorasLaboradaTableSeeder::class);
         $this->call(HorasLaboradasDetalleTableSeeder::class);
         $this->call(FeriadosTableSeeder::class);
+        $this->call(RecargosTableSeeder::class);
     }
 }
