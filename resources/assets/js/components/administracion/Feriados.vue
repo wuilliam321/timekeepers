@@ -23,19 +23,11 @@
 
 <template>
     <div>
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="row">
-                    <div class="col-xs-9">
-                        <h2>Dias Feriados</h2>
-                    </div>
-                    <div class="col-xs-3 text-right"><br />&nbsp;
-                        <a href="#" class="btn btn-primary" v-on:click="newFeriado = {fecha: ''}"  data-toggle="modal" data-target="#add-feriado"><i class="fa fa-plus"></i> Nuevo Dia Feriado</a>
-                    </div>
-                </div>
+        <div class="row" style="margin-bottom: 20px">
+            <div class="col-xs-12 text-right">
+                <a href="#" class="btn btn-primary" v-on:click="newFeriado = {fecha: ''}"  data-toggle="modal" data-target="#add-feriado"><i class="fa fa-plus"></i> Nuevo Dia Feriado</a>
             </div>
         </div>
-
         <div class="panel panel-default">
             <div class="panel-body">
                 <table class="table table-borderless m-b-none" v-if="feriados.length > 0">

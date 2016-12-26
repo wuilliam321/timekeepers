@@ -18,9 +18,9 @@ class DatabaseSeeder extends Seeder
         $this->call(CuentasCostoTableSeeder::class);
         $this->call(CuentasBeneficioTableSeeder::class);
         $this->call(BeneficioTableSeeder::class);
-        $this->call(HorasEntradaTableSeeder::class);
-        $this->call(HorasLaboradaTableSeeder::class);
-        $this->call(HorasLaboradasDetalleTableSeeder::class);
+//        $this->call(HorasEntradaTableSeeder::class);
+//        $this->call(HorasLaboradaTableSeeder::class);
+//        $this->call(HorasLaboradasDetalleTableSeeder::class);
         $this->call(FeriadosTableSeeder::class);
         $this->call(RecargosTableSeeder::class);
     }

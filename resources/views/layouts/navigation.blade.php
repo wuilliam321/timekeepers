@@ -1,6 +1,9 @@
 <nav class="navbar-default navbar-static-side" role="navigation">
     <div class="sidebar-collapse">
         <div class="logo"></div>
+        <div class="page-heading planillas-heading sidebar-heading">
+            <span>Menu</span>
+        </div>
         <ul class="nav metismenu" id="side-menu">
             @if (Auth::guest())
                 <li><a href="{{ url('/login') }}"><i class="fa fa-unlock"></i> <span class="nav-label">Login</span></a></li>
@@ -14,7 +17,7 @@
                     @else
                         <li>
                     @endif
-                        <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">Administracion</span> <span class="fa arrow"></span></a>
+                        <a href="#"><i class="fa fa-gears"></i> <span class="nav-label">Administraci&oacute;n</span> <span class="fa arrow"></span></a>
 
                         <ul class="nav nav-second-level collapse out">
                             <li class="{{ isActiveRoute('admin_feriados') }}"><a href="{{ url('/administracion/feriados') }}"><i class="fa fa-calendar"></i> <span class="nav-label">Dias Feriados</span> </a></li>

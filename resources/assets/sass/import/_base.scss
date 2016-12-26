@@ -1,6 +1,5 @@
 body {
   font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  background-color: #2f4050;
   font-size: 13px;
   color: $text-color;
   overflow-x: hidden;
@@ -287,8 +286,21 @@ body.body-small .footer.fixed {
 .page-heading {
   border-top: 0;
   padding: 0 10px 20px 10px;
+  background-image: url('../title-bg.png');
+  -ms-background-position-x: -220px;
+  background-position-x: -220px;
+  color:#fff;
 }
-
+.sidebar-heading {
+  height: 94px;
+  -ms-background-position-x: 0px;
+  background-position-x: 0px;
+}
+.sidebar-heading span {
+  font-size: 1.4em;
+  top: 60px;
+  position: relative;
+}
 .panel-heading h1, .panel-heading h2 {
   margin-bottom: 5px;
 }
@@ -482,9 +494,10 @@ img.circle-border {
 }
 
 .breadcrumb {
-  background-color: #ffffff;
   padding: 0;
   margin-bottom: 0;
+  background: none !important;
+  border: none !important;
 }
 
 .breadcrumb > li a {

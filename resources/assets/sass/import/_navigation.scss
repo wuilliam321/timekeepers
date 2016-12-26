@@ -1,5 +1,5 @@
 .nav > li > a {
-  color: $nav-text-color;
+  color: $navy;
   font-weight: 600;
   padding: 14px 20px 14px 25px;
 }
@@ -8,7 +8,8 @@
   color: #999c9e;
 }
 
-.nav > li.active > a {
+.nav > li.active > a,
+.nav-second-level li a {
   color: #ffffff;
 }
 
@@ -39,7 +40,7 @@
 }
 
 .navbar-default .logo {
-  background-color: #ccc;
+  background-color: #fff;
 }
 
 .navbar-default .logo {
@@ -47,7 +48,7 @@
   background-position: center;
   background-size: 100%;
   background-repeat:no-repeat;
-  height: 160px;
+  height: 51px;
 }
 
 .mini-navbar .logo {
@@ -180,7 +181,7 @@
 
 .nav > li.active {
   border-left: 4px solid darken($navy, 2%);
-  background: darken($nav-bg, 3%);
+  background: lighten($navy, 10%);
 }
 
 .nav.nav-second-level > li.active {
@@ -328,7 +329,7 @@ body.mini-navbar .navbar-default .nav > li > .nav-second-level li a {
 }
 
 .navbar-default .landing_link a:hover {
-  background: $navy !important;
+  background: lighten($navy, 10%)!important;
   color: white;
 }
 

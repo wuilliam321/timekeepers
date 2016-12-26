@@ -23,7 +23,8 @@ class RecargosController extends Controller
         // Check if the current week has been processed in the past
         $dt = Carbon::parse($ultima_semana[0]);
         $numero_semana = $dt->weekOfYear;
-        $this->storeSemanaProcesada($numero_semana);
+        $anio = $dt->year;
+        $this->storeSemanaProcesada($numero_semana, $anio);
 
         $colaboradores = Colaboradore::all();
         foreach ($colaboradores as $colaborador) {
@@ -273,14 +274,16 @@ class RecargosController extends Controller
         echo("</table>");
     }
 
-    public function storeSemanaProcesada($semana)
+    public function storeSemanaProcesada($semana, $anio)
     {
-        $semana_procesada = SemanasProcesada::where('semana', '=', $semana)->get();
+        $semana_procesada = SemanasProcesada::where('semana', '=', $semana)
+            ->where('anio', '=', $anio)->get();
         if (sizeof($semana_procesada->toArray()) > 0) {
             abort(409, 'La semana ya ha sido procesada');
         }
         $semana_procesada = new SemanasProcesada();
         $semana_procesada->semana = $semana;
+        $semana_procesada->anio = $anio;
         $semana_procesada->save();
     }
 

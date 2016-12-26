@@ -16,6 +16,7 @@ class CreateSemanasProcesadasTable extends Migration
         Schema::create('semanas_procesadas', function (Blueprint $table) {
             $table->increments('id');
             $table->string('semana');
+            $table->string('anio', 4);
             $table->timestamps();
         });
     }
