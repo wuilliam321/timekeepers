@@ -21,8 +21,8 @@
             <thead>
                 <tr>
                     <th class="col-xs-3"></th>
-                    <th v-for="fecha in getUltimasFechas()">
-                        {{ fecha | date_format('MMM-DD') }}
+                    <th v-for="fecha in getUltimasFechas()" class="text-center">
+                        {{ fecha | date_format('MMM DD') }}
                     </th>
                     <th></th>
                 </tr>

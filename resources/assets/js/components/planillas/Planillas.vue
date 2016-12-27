@@ -167,9 +167,9 @@
                                             <button v-show="isSaving" class="btn btn-primary disabled col-xs-1 pull-right">
                                                 <i class="fa fa-spinner fa-spin"></i>&nbsp;
                                             </button>
-                                            <button v-show="!isSaving" v-on:click="saveHoras(planilla.id)" class="btn btn-primary col-xs-1 pull-right">
+                                            <button v-show="!isSaving" v-on:click="saveHoras(planilla.id)" class="btn btn-primary pull-right">
                                                 <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
-                                                Save
+                                                Guardar
                                             </button>
                                         </div>
                                     </div>

@@ -25,8 +25,8 @@
                 <th class="col-xs-3">Cuenta de costo</th>
                 <th class="col-xs-2">Beneficio</th>
                 <th class="col-xs-3">Cuenta de beneficio</th>
-                <th v-for="hora in getUltimasFechas()">
-                    {{ hora | date_format('MMM-DD') }}
+                <th v-for="hora in getUltimasFechas()" class="text-center">
+                    {{ hora | date_format('MMM DD') }}
                 </th>
                 <th></th>
             </tr>
