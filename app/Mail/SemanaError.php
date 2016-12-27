@@ -37,7 +37,7 @@ class SemanaError extends Mailable implements ShouldQueue
             ->with([
                 'semana' => $dt->weekOfYear - 1,
                 'anio' => $dt->year,
-                'fecha' => $dt,
+                'fecha' => 'Desde ' . ($dt->format('Y-m-d')) . ' hasta ' . $dt->addDays(6)->format('Y-m-d'),
                 'error' => 'Ha ocurrido un error (ver archivo adjunto)',
             ])
             ->attach('/tmp/output.txt', array(

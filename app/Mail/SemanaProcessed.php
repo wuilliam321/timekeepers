@@ -3,6 +3,7 @@
 namespace App\Mail;
 
 use App\SemanasProcesada;
+use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
@@ -33,12 +34,18 @@ class SemanaProcessed extends Mailable implements ShouldQueue
      */
     public function build()
     {
+        $dt = Carbon::parse($this->semana->anio . 'W' . ($this->semana->semana));
+        Carbon::setTestNow($dt);
+        $domingo = new Carbon('last sunday');
+        $data = [
+            'semana' => $this->semana->semana,
+            'anio' => $this->semana->anio,
+            'fecha' => 'Desde ' . ($domingo->format('Y-m-d')) . ' hasta ' . $domingo->addDays(6)->format('Y-m-d'),
+            'html' => $this->html
+        ];
+        Carbon::setTestNow(); // Clearing now
+
         return $this->view('emails.recargos.success')
-            ->with([
-                'semana' => $this->semana->semana,
-                'anio' => $this->semana->anio,
-                'fecha' => $this->semana->created_at,
-                'html' => $this->html
-            ]);
+            ->with($data);
     }
 }

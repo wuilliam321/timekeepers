@@ -6,6 +6,7 @@ use App\Colaboradore;
 use App\Feriado;
 use App\HorasEntrada;
 use App\HorasLaborada;
+use App\HorasLaboradasDetalle;
 use App\HorasLaboradasRecargo;
 use App\Mail\SemanaError;
 use App\Mail\SemanaProcessed;
@@ -39,79 +40,83 @@ class ProcessHorasRecargos implements ShouldQueue
      */
     public function handle()
     {
-        Log::info('Consultado ultima semana');
-        DB::beginTransaction();
-        $html_for_mail = '';
+        Log::info('Consultado ultimas semanas');
+        $older_domingo = $this->getOlderDomingo();
+        $latest_domingo = $this->getLatestDomingo();
+        while($older_domingo->diffInDays($latest_domingo, false) >= 0) {
+            DB::beginTransaction();
+            $html_for_mail = '';
+            $ultima_semana = $this->getSemana($older_domingo);
 
-        $ultima_semana = $this->getUltimaSemana();
-
-        // Check if the current week has been processed in the past
-        $dt = Carbon::parse($ultima_semana[0]);
-        $numero_semana = $dt->weekOfYear;
-        $anio = $dt->year;
-        $semana = $this->storeSemanaProcesada($numero_semana, $anio);
-        if ($semana) {
-            Log::info('Procesando Semana ' . ($numero_semana) . ' (' . $anio . ')...');
-            $colaboradores = Colaboradore::all();
-            foreach ($colaboradores as $colaborador) {
-                $horas_entrada = $this->getHorasEntrada($colaborador->id, $ultima_semana);
-                $horas_laboradas = $this->getSumaHorasLaboradas($colaborador->id, $ultima_semana);
-                $dias_nacionales = $this->getDiasNacionales($ultima_semana);
-                if (config('app.send_mail_with_semana_procesada')) {
-                    $html_for_mail .= '<h3>Colaborador: ' . $colaborador->nombre . '</h3>';
-                    $html_for_mail .= $this->getHtmlCabeceras();
-                }
-                $tiempo_compensatorio = 0;
-                $horas_entras_acumuladas = 0;
-                $dias_a_compensar_por_no_dar_compensatorio = 0;
-                $data_for_output = [];
-                foreach ($ultima_semana as $key => $fecha) {
-                    $data_for_output[$fecha] = $this->process($fecha, $horas_entrada[$fecha], $horas_laboradas[$fecha], $dias_nacionales[$fecha], $tiempo_compensatorio, $horas_entras_acumuladas, $dias_a_compensar_por_no_dar_compensatorio);
-                }
-
-                if (sizeof($data_for_output) > 0) {
+            // Check if the current week has been processed in the past
+            $dt = Carbon::parse($ultima_semana[1]); // 1 = Monday (to get the real week number of year
+            $numero_semana = $dt->weekOfYear;
+            $anio = $dt->year;
+            $semana = $this->storeSemanaProcesada($numero_semana, $anio);
+            if ($semana) {
+                Log::info('Procesando Semana ' . ($numero_semana) . ' (' . $anio . ')...');
+                $colaboradores = Colaboradore::all();
+                foreach ($colaboradores as $colaborador) {
+                    $horas_entrada = $this->getHorasEntrada($colaborador->id, $ultima_semana);
+                    $horas_laboradas = $this->getSumaHorasLaboradas($colaborador->id, $ultima_semana);
+                    $dias_nacionales = $this->getDiasNacionales($ultima_semana);
+                    if (config('app.send_mail_with_semana_procesada')) {
+                        $html_for_mail .= '<h3>Colaborador: ' . $colaborador->nombre . '</h3>';
+                        $html_for_mail .= $this->getHtmlCabeceras();
+                    }
+                    $tiempo_compensatorio = 0;
+                    $horas_entras_acumuladas = 0;
+                    $dias_a_compensar_por_no_dar_compensatorio = 0;
+                    $data_for_output = [];
                     foreach ($ultima_semana as $key => $fecha) {
-                        $dt = Carbon::parse($fecha);
-                        if (array_key_exists($fecha, $dias_nacionales) && array_key_exists($fecha, $data_for_output) && !$dias_nacionales[$fecha] && $dt->dayOfWeek !== 0) {
-                            if ($dias_a_compensar_por_no_dar_compensatorio > 0) {
-                                $data_for_output[$fecha]['recargos']['C_1_88'] = $data_for_output[$fecha]['recargos']['C_1_88'] + $data_for_output[$fecha]['recargos']['C_1_25'];
-                                $data_for_output[$fecha]['recargos']['C_1_25'] = 0;
-                                $data_for_output[$fecha]['recargos']['C_2_25'] = $data_for_output[$fecha]['recargos']['C_2_25'] + $data_for_output[$fecha]['recargos']['C_1_50'];
-                                $data_for_output[$fecha]['recargos']['C_1_50'] = 0;
-                                $data_for_output[$fecha]['recargos']['C_3_28'] = $data_for_output[$fecha]['recargos']['C_3_28'] + $data_for_output[$fecha]['recargos']['C_2_18'];
-                                $data_for_output[$fecha]['recargos']['C_2_18'] = 0;
-                                $data_for_output[$fecha]['recargos']['C_3_94'] = $data_for_output[$fecha]['recargos']['C_3_94'] + $data_for_output[$fecha]['recargos']['C_2_63'];
-                                $data_for_output[$fecha]['recargos']['C_2_63'] = 0;
-                                $dias_a_compensar_por_no_dar_compensatorio = $dias_a_compensar_por_no_dar_compensatorio - 1;
+                        $data_for_output[$fecha] = $this->process($fecha, $horas_entrada[$fecha], $horas_laboradas[$fecha], $dias_nacionales[$fecha], $tiempo_compensatorio, $horas_entras_acumuladas, $dias_a_compensar_por_no_dar_compensatorio);
+                    }
+
+                    if (sizeof($data_for_output) > 0) {
+                        foreach ($ultima_semana as $key => $fecha) {
+                            $dt = Carbon::parse($fecha);
+                            if (array_key_exists($fecha, $dias_nacionales) && array_key_exists($fecha, $data_for_output) && !$dias_nacionales[$fecha] && $dt->dayOfWeek !== 0) {
+                                if ($dias_a_compensar_por_no_dar_compensatorio > 0) {
+                                    $data_for_output[$fecha]['recargos']['C_1_88'] = $data_for_output[$fecha]['recargos']['C_1_88'] + $data_for_output[$fecha]['recargos']['C_1_25'];
+                                    $data_for_output[$fecha]['recargos']['C_1_25'] = 0;
+                                    $data_for_output[$fecha]['recargos']['C_2_25'] = $data_for_output[$fecha]['recargos']['C_2_25'] + $data_for_output[$fecha]['recargos']['C_1_50'];
+                                    $data_for_output[$fecha]['recargos']['C_1_50'] = 0;
+                                    $data_for_output[$fecha]['recargos']['C_3_28'] = $data_for_output[$fecha]['recargos']['C_3_28'] + $data_for_output[$fecha]['recargos']['C_2_18'];
+                                    $data_for_output[$fecha]['recargos']['C_2_18'] = 0;
+                                    $data_for_output[$fecha]['recargos']['C_3_94'] = $data_for_output[$fecha]['recargos']['C_3_94'] + $data_for_output[$fecha]['recargos']['C_2_63'];
+                                    $data_for_output[$fecha]['recargos']['C_2_63'] = 0;
+                                    $dias_a_compensar_por_no_dar_compensatorio = $dias_a_compensar_por_no_dar_compensatorio - 1;
+                                }
                             }
                         }
-                    }
-                    $todas_horas_laboradas = $this->getHorasLaboradas($colaborador->id, $ultima_semana);
-                    $data_for_save = $this->prepareData($data_for_output, $todas_horas_laboradas);
+                        $todas_horas_laboradas = $this->getHorasLaboradas($colaborador->id, $ultima_semana);
+                        $data_for_save = $this->prepareData($data_for_output, $todas_horas_laboradas);
 
-                    $this->storeRecargos($data_for_save);
-                    if (config('app.send_mail_with_semana_procesada')) {
-                        foreach ($data_for_output as $fecha) {
-                            $html_for_mail .= $this->getHtmlBody($fecha);
+                        $this->storeRecargos($data_for_save);
+                        if (config('app.send_mail_with_semana_procesada')) {
+                            foreach ($data_for_output as $fecha) {
+                                $html_for_mail .= $this->getHtmlBody($fecha);
+                            }
                         }
+
                     }
+                    if (config('app.send_mail_with_semana_procesada')) {
+                        $html_for_mail .= $this->getHtmlPie();
+                    }
+                }
+                Log::info('Fin procesado semana ' . ($numero_semana) . ' (' . $anio . ')');
+                $message = (new SemanaProcessed($semana, $html_for_mail));
+                Mail::to(config('app.notification_mail'))->queue($message);
+                DB::commit();
 
-                }
-                if (config('app.send_mail_with_semana_procesada')) {
-                    $html_for_mail .= $this->getHtmlPie();
-                }
+            } else {
+                DB::rollBack();
+                $error = 'La semana ' . ($numero_semana) . ' (' . $anio . ')' . ' ya ha sido procesada';
+                Log::error($error);
+                $message = (new SemanaError());
+                Mail::to(config('app.notification_mail'))->queue($message);
             }
-            Log::info('Fin procesado semana ' . ($numero_semana) . ' (' . $anio . ')');
-            $message = (new SemanaProcessed($semana, $html_for_mail));
-            Mail::to(config('app.notification_mail'))->queue($message);
-            DB::commit();
-
-        } else {
-            DB::rollBack();
-            $error = 'La semana ' . ($numero_semana) . ' (' . $anio . ')' . ' ya ha sido procesada';
-            Log::error($error);
-            $message = (new SemanaError());
-            Mail::to(config('app.notification_mail'))->queue($message);
+            $older_domingo = $older_domingo->addWeek();
         }
         Log::info('***Fin Procesamiento Semana***');
     }
@@ -329,9 +334,38 @@ class ProcessHorasRecargos implements ShouldQueue
         return $semana_procesada;
     }
 
-    public function getUltimaSemana()
+    public function getOlderDomingo()
     {
-        $dt = new Carbon('last sunday');
+        $domingo = false;
+        $older = SemanasProcesada::orderBy('semana', 'desc')->limit(1)->get();
+        foreach ($older as $oldone) {
+            $dt = Carbon::parse($oldone->anio . 'W' . ($oldone->semana + 1));
+            Carbon::setTestNow($dt);
+            $domingo = new Carbon('next sunday');
+            Carbon::setTestNow(); // Clearing now
+        }
+
+        if (!$domingo) {
+            $domingo = new Carbon('last sunday');
+            $older = HorasLaboradasDetalle::orderBy('fecha_laborada')->limit(1)->get();
+            foreach ($older as $fecha) {
+                $dt = Carbon::parse($fecha->fecha_laborada);
+                Carbon::setTestNow($dt);
+                $domingo = new Carbon('this sunday');
+                Carbon::setTestNow(); // Clearing now
+            }
+        }
+        return $domingo;
+    }
+
+    public function getLatestDomingo()
+    {
+        $domingo = new Carbon('last sunday');
+        return $domingo;
+    }
+
+    public function getSemana($dt)
+    {
         $dt = $dt->subWeek();
         for ($i = 0; $i < 7; $i++) {
             $semana[] = $dt->format('Y-m-d');

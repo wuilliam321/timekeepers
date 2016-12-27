@@ -56,8 +56,8 @@ return [
     */
 
     'from' => [
-        'address' => 'hello@example.com',
-        'name' => 'Example',
+        'address' => 'no-reply@ingenieriarm.com',
+        'name' => 'Ingenieria RM - Recargos BOT',
     ],
 
     /*
