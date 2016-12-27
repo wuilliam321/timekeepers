@@ -11,6 +11,7 @@ window.$ = window.jQuery = require('jquery');
 require('bootstrap-sass');
 
 window.moment = require('moment-timezone');
+moment.locale('es');
 /**
  * Vue is a modern JavaScript library for building interactive web interfaces
  * using reactive data binding and reusable components. Vue's API is clean

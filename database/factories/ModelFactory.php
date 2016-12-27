@@ -63,6 +63,6 @@ $factory->define(App\HorasLaboradasDetalle::class, function (Faker\Generator $fa
 
 $factory->define(App\Feriado::class, function (Faker\Generator $faker) {
     return [
-        'fecha' => $faker->dateTimeThisMonth(),
+        'fecha' => $faker->date('m-d'),
     ];
 });

@@ -53,7 +53,7 @@
                             <!-- Name -->
                             <td style="vertical-align: middle;"
                                 v-bind:id="feriado.id">
-                                {{ feriado.fecha }}
+                                {{ feriado.fecha | date_readable }}
                             </td>
                             <td>
                                 <div class="btn-group">
@@ -100,7 +100,7 @@
                         <div class="modal-body">
                             <div class="form-group date">
                                 <label for="fecha">Fecha</label>
-                                <input type="text" class="form-control" id="fecha" name="fecha" placeholder="Selecciona la fecha feriada" v-model="currentFeriado.fecha" v-bind:value="currentFeriado.fecha" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                                <input type="text" class="form-control" id="fecha" name="fecha" placeholder="Selecciona la fecha feriada" v-model="currentFeriado.fecha" v-bind:value="currentFeriado.fecha" data-provide="datepicker" data-date-format="mm-dd">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -125,7 +125,7 @@
                         <div class="modal-body">
                             <div class="form-group date">
                                 <label for="fecha">Fecha</label>
-                                <input type="text" class="form-control" id="fecha" name="fecha" placeholder="Selecciona la fecha feriada" v-model="newFeriado.fecha" v-bind:value="newFeriado.fecha" data-provide="datepicker" data-date-format="yyyy-mm-dd">
+                                <input type="text" class="form-control" id="fecha" name="fecha" placeholder="Selecciona la fecha feriada" v-model="newFeriado.fecha" v-bind:value="newFeriado.fecha" data-provide="datepicker" data-date-format="mm-dd">
                             </div>
                         </div>
                         <div class="modal-footer">
@@ -181,6 +181,14 @@
          */
         mounted() {
             this.prepareComponent();
+        },
+
+        filters: {
+            date_readable: function (value) {
+                if (!value) return '';
+                value = moment(new Date(value)).utc().format('D [de] MMMM');
+                return value;
+            }
         },
 
         methods: {
