@@ -509,11 +509,13 @@ class ProcessHorasRecargos implements ShouldQueue
 
     public function getDiasNacionales($semana)
     {
-        $feriados = Feriado::whereIn('fecha', $semana)->get();
+        $feriados = Feriado::all();
+        $year = date('Y');
         $data = array_fill_keys($semana, '');
         foreach ($feriados as $feriado) {
             foreach ($semana as $dia) {
-                if ($feriado->fecha === $dia) {
+                $fecha = $year . '-' .$feriado->fecha;
+                if ($fecha === $dia) {
                     $data[$dia] = true;
                 }
             }
@@ -523,8 +525,6 @@ class ProcessHorasRecargos implements ShouldQueue
 
     public function process($fecha, $hora_de_entrada, $horas_laboradas, $dia_nacional = false, &$tiempo_compensatorio, &$horas_acumuladas, &$dias_a_compensar_por_no_dar_compensatorio)
     {
-//        print_r($horas_laboradas);
-//        echo '<br>';
         $dt = Carbon::parse($fecha);
         $es_domingo = ($dt->dayOfWeek === 0);
         $es_sabado = ($dt->dayOfWeek === 6);
