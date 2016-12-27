@@ -4,14 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Jobs\ProcessHorasRecargos;
 use App\Http\Requests;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class RecargosController extends Controller
 {
     public function run()
     {
-//        $job = (())->delay(Carbon::now()->addMinutes(1));
-
-        dispatch((new ProcessHorasRecargos)->delay(10));
+        Log::info('***Inicio Procesamiento Semana***');
+        dispatch(new ProcessHorasRecargos);
     }
 }

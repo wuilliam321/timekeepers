@@ -7,6 +7,8 @@ use App\Feriado;
 use App\HorasEntrada;
 use App\HorasLaborada;
 use App\HorasLaboradasRecargo;
+use App\Mail\SemanaError;
+use App\Mail\SemanaProcessed;
 use App\SemanasProcesada;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -15,6 +17,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Mail;
 
 class ProcessHorasRecargos implements ShouldQueue
 {
@@ -27,7 +30,6 @@ class ProcessHorasRecargos implements ShouldQueue
      */
     public function __construct()
     {
-        Log::info('Construyendo la cola');
     }
 
     /**
@@ -37,7 +39,9 @@ class ProcessHorasRecargos implements ShouldQueue
      */
     public function handle()
     {
+        Log::info('Consultado ultima semana');
         DB::beginTransaction();
+        $html_for_mail = '';
 
         $ultima_semana = $this->getUltimaSemana();
 
@@ -45,14 +49,18 @@ class ProcessHorasRecargos implements ShouldQueue
         $dt = Carbon::parse($ultima_semana[0]);
         $numero_semana = $dt->weekOfYear;
         $anio = $dt->year;
-        if ($this->storeSemanaProcesada($numero_semana, $anio)) {
+        $semana = $this->storeSemanaProcesada($numero_semana, $anio);
+        if ($semana) {
+            Log::info('Procesando Semana ' . ($numero_semana) . ' (' . $anio . ')...');
             $colaboradores = Colaboradore::all();
             foreach ($colaboradores as $colaborador) {
                 $horas_entrada = $this->getHorasEntrada($colaborador->id, $ultima_semana);
                 $horas_laboradas = $this->getSumaHorasLaboradas($colaborador->id, $ultima_semana);
                 $dias_nacionales = $this->getDiasNacionales($ultima_semana);
-//            echo '<h2>Colaborador: ' . $colaborador->nombre . '</h2>';
-//            $this->printCabeceras();
+                if (config('app.send_mail_with_semana_procesada')) {
+                    $html_for_mail .= '<h3>Colaborador: ' . $colaborador->nombre . '</h3>';
+                    $html_for_mail .= $this->getHtmlCabeceras();
+                }
                 $tiempo_compensatorio = 0;
                 $horas_entras_acumuladas = 0;
                 $dias_a_compensar_por_no_dar_compensatorio = 0;
@@ -80,117 +88,131 @@ class ProcessHorasRecargos implements ShouldQueue
                     }
                     $todas_horas_laboradas = $this->getHorasLaboradas($colaborador->id, $ultima_semana);
                     $data_for_save = $this->prepareData($data_for_output, $todas_horas_laboradas);
+
                     $this->storeRecargos($data_for_save);
-//                foreach ($data_for_output as $fecha) {
-//                    $this->printBody($fecha);
-//                }
+                    if (config('app.send_mail_with_semana_procesada')) {
+                        foreach ($data_for_output as $fecha) {
+                            $html_for_mail .= $this->getHtmlBody($fecha);
+                        }
+                    }
 
                 }
-
-//            $this->printPie();
+                if (config('app.send_mail_with_semana_procesada')) {
+                    $html_for_mail .= $this->getHtmlPie();
+                }
             }
-            Log::info('Fin de la cola');
+            Log::info('Fin procesado semana ' . ($numero_semana) . ' (' . $anio . ')');
+            $message = (new SemanaProcessed($semana, $html_for_mail));
+            Mail::to(config('app.notification_mail'))->queue($message);
             DB::commit();
 
         } else {
-            Log::error('La semana ya ha sido procesada');
             DB::rollBack();
+            $error = 'La semana ' . ($numero_semana) . ' (' . $anio . ')' . ' ya ha sido procesada';
+            Log::error($error);
+            $message = (new SemanaError());
+            Mail::to(config('app.notification_mail'))->queue($message);
         }
+        Log::info('***Fin Procesamiento Semana***');
     }
 
-    public function printCabeceras()
+    public function getHtmlCabeceras()
     {
+        $html = '';
         //IMPRESION DEL HEADER DE LA TABLA
-        echo("<table width='100%' border='1'>");
-        echo("<tr>");
-        echo("<td valign='top' bgcolor='#FFFF00'  align='center' colspan=9>");
-        echo("Horas trabajadas");
-        echo("</td>");
-        echo("<td valign='top' bgcolor='#00FFFF' align='center' colspan=15>");
-        echo("Clasificacion de recargos de horas trabajadas");
-        echo("</td>");
-        echo("</tr>");
-        echo("<tr>");
-        echo("<td valign='top' bgcolor='#FFC039'>");
-        echo("Dia");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("Hora de entrada");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("Horas regulares");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("Hora de salida reg.");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("Horas extra");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("Horas trabajadas");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("Horas diurno");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("Horas nocturno");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#FFC039'>");
-        echo("H. extra acumuladas");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 1.00");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 1.25");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 1.50");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 1.88");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 2.00");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 2.18");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 2.25");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 2.50");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 2.63");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 3.00");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 3.12");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 3.28");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 3.75");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 3.94");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 5.47");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#71DA73'>");
-        echo("Horas a 6.56");
-        echo("</td>");
-        echo("</tr>");
+        $html .= "<table width='100%' border='1'>";
+        $html .= "<tr>";
+        $html .= "<td valign='top' bgcolor='#FFFF00'  align='center' colspan=9>";
+        $html .= "Horas trabajadas";
+        $html .= "</td>";
+        $html .= "<td valign='top' bgcolor='#00FFFF' align='center' colspan=15>";
+        $html .= "Clasificacion de recargos de horas trabajadas";
+        $html .= "</td>";
+        $html .= "</tr>";
+        $html .= "<tr>";
+        $html .= "<td valign='top' bgcolor='#FFC039'>";
+        $html .= "Dia";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "Hora de entrada";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "Horas regulares";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "Hora de salida reg.";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "Horas extra";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "Horas trabajadas";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "Horas diurno";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "Horas nocturno";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#FFC039'>";
+        $html .= "H. extra acumuladas";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 1.00";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 1.25";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 1.50";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 1.88";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 2.00";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 2.18";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 2.25";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 2.50";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 2.63";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 3.00";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 3.12";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 3.28";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 3.75";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 3.94";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 5.47";
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#71DA73'>";
+        $html .= "Horas a 6.56";
+        $html .= "</td>";
+        $html .= "</tr>";
+
+        return $html;
     }
 
-    public function printBody($data)
+    public function getHtmlBody($data)
     {
+        $html = '';
         $dia_de_la_semana = 0;
         $hora_de_entrada = 0;
         $horas_regulares = 0;
@@ -200,89 +222,95 @@ class ProcessHorasRecargos implements ShouldQueue
         $horas_despues_de_6 = 0;
         $horas_acumuladas = 0;
         extract($data);
-        echo("<tr>");
-        echo("<td valign='top' bgcolor='#D3D2D0'>");
-        echo($dia_de_la_semana);
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo($hora_de_entrada);
-        echo(":00 A.M.");
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo($horas_regulares);
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo($hora_de_salida);
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo($horas_extra);
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo(($horas_regulares + $horas_extra));
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo($horas_antes_de_6);
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo($horas_despues_de_6);
-        echo("</td>");
-        echo("<td valign='top' align='center' bgcolor='#D3D2D0'>");
-        echo($horas_acumuladas);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_1_00']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_1_25']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_1_50']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_1_88']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_2_00']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_2_18']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_2_25']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_2_50']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_2_63']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_3_00']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_3_12']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_3_28']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_3_75']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_3_94']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_5_47']);
-        echo("</td>");
-        echo("<td valign='top' align='center'>");
-        echo($recargos['C_6_56']);
-        echo("</td>");
-        echo("</tr>");
+        $hora_entrada = floor($hora_de_entrada);
+        $minutos_entrada = $hora_de_entrada - $hora_entrada;
+        $minutos_entrada = $minutos_entrada * 60;
+        if ($minutos_entrada < 10) {
+            $minutos_entrada = "0" . $minutos_entrada;
+        }
+        $html .= "<tr>";
+        $html .= "<td valign='top' bgcolor='#D3D2D0'>";
+        $html .= $dia_de_la_semana;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= $hora_entrada . ':' . $minutos_entrada;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= $horas_regulares;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= $hora_de_salida;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= $horas_extra;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= ($horas_regulares + $horas_extra);
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= $horas_antes_de_6;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= $horas_despues_de_6;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center' bgcolor='#D3D2D0'>";
+        $html .= $horas_acumuladas;
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_1_00'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_1_25'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_1_50'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_1_88'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_2_00'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_2_18'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_2_25'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_2_50'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_2_63'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_3_00'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_3_12'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_3_28'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_3_75'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_3_94'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_5_47'];
+        $html .= "</td>";
+        $html .= "<td valign='top' align='center'>";
+        $html .= $recargos['C_6_56'];
+        $html .= "</td>";
+        $html .= "</tr>";
+        return $html;
     }
 
-    public function printPie()
+    public function getHtmlPie()
     {
-        echo("</table>");
+        return "</table>";
     }
 
     public function storeSemanaProcesada($semana, $anio)
@@ -428,14 +456,17 @@ class ProcessHorasRecargos implements ShouldQueue
                 $horas_recargo->codigo_recargo = $data['codigo'];
                 $horas_recargo->horas_laborada_id = $data['id'];
                 $horas_recargo->colaborador_id = $data['colaborador_id'];
-                $horas_recargo->planilla_id = $data['planilla_id']; // bugg
+                $horas_recargo->planilla_id = $data['planilla_id'];
                 $horas_recargo->cuenta_costo_id = $data['cuenta_costo_id'];
                 $horas_recargo->beneficio_id = $data['beneficio_id'];
                 $horas_recargo->cuenta_beneficio_id = $data['cuenta_beneficio_id'];
                 try {
                     $horas_recargo->save();
                 } catch (Exception $e) {
-                    Log::error('Error: ' . $e->getMessage());
+                    $error = 'Error: ' . $e->getMessage();
+                    Log::error($error);
+                    $message = (new SemanaError());
+                    Mail::to(config('app.notification_mail'))->queue($message);
                     DB::rollBack();
                 }
             }

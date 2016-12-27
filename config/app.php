@@ -13,6 +13,8 @@ return [
     */
 
     'name' => 'Laravel',
+    'send_mail_with_semana_procesada' =>  env('SEND_MAIL_WITH_SEMANA_PROCESADA', false),
+    'notification_mail' => env('NOTIFICATION_MAIL', 'no-reply@example.com'),
 
     /*
     |--------------------------------------------------------------------------
