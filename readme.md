@@ -69,9 +69,9 @@ Open the `.env` file and change these values with the yours
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
-DB_DATABASE=tamadb # < HERE GOES YOUR MYSQL DATABASE
-DB_USERNAME=root # < HERE GOES YOUR MYSQL USERNAME
-DB_PASSWORD=root    # HERE GOES YOUR MYSQL PASSWORD
+DB_DATABASE=timekeepersdb # < HERE GOES YOUR MYSQL DATABASE
+DB_USERNAME=root          # < HERE GOES YOUR MYSQL USERNAME
+DB_PASSWORD=              # HERE GOES YOUR MYSQL PASSWORD
 
 #Setup the SMPT Server or any mail server, Ex Google SMTP
 
