@@ -3,7 +3,7 @@
 ## How to install
 
 ### Pre-requisite
- * Install PHP5.6+ (see https://launchpad.net/~ondrej/+archive/ubuntu/php)
+ * Install PHP5.6+
  * Install Laravel (see https://laravel.com/docs/5.3)
  * Install Composer (https://getcomposer.org/download/)
  * Install Node.js (Stable version) (https://github.com/creationix/nvm)
@@ -11,6 +11,7 @@
  * Install a Mysql Server
 
 ### PHP 5.6 on Ubuntu
+See https://launchpad.net/~ondrej/+archive/ubuntu/php
 ```
 sudo add-apt-repository ppa:ondrej/php
 sudo apt-get update
