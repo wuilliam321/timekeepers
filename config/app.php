@@ -15,6 +15,7 @@ return [
     'name' => 'Laravel',
     'send_mail_with_semana_procesada' =>  env('SEND_MAIL_WITH_SEMANA_PROCESADA', false),
     'notification_mail' => env('NOTIFICATION_MAIL', 'no-reply@example.com'),
+    'base_url' => env('BASE_URL', 'http://localhost:8000'),
 
     /*
     |--------------------------------------------------------------------------

@@ -346,12 +346,12 @@ class ProcessHorasRecargos implements ShouldQueue
         }
 
         if (!$domingo) {
-            $domingo = new Carbon('last sunday');
+            $domingo = new Carbon('this sunday');
             $older = HorasLaboradasDetalle::orderBy('fecha_laborada')->limit(1)->get();
             foreach ($older as $fecha) {
                 $dt = Carbon::parse($fecha->fecha_laborada);
                 Carbon::setTestNow($dt);
-                $domingo = new Carbon('this sunday');
+                $domingo = new Carbon('next sunday');
                 Carbon::setTestNow(); // Clearing now
             }
         }

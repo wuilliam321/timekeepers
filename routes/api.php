@@ -47,7 +47,7 @@ Route::get('/beneficios', 'BeneficiosController@getAllBeneficios')
 Route::get('/cuentas_beneficios', 'CuentasBeneficiosController@getAllCuentas')
     ->middleware('auth:api');
 
-Route::get('/procesar_horas', 'RecargosController@run');
+//Route::get('/procesar_horas', 'RecargosController@run');
 
 /** Feriados **/
 Route::get('/feriados', 'FeriadosController@getFeriados')->middleware('auth:api');

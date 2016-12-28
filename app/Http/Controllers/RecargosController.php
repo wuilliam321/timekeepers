@@ -8,9 +8,9 @@ use Illuminate\Support\Facades\Log;
 
 class RecargosController extends Controller
 {
-    public function run()
-    {
-        Log::info('***Inicio Procesamiento Semana***');
-        dispatch(new ProcessHorasRecargos);
-    }
+//    public function run()
+//    {
+//        Log::info('***Inicio Procesamiento Semana***');
+//        dispatch(new ProcessHorasRecargos);
+//    }
 }
