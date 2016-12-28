@@ -1,27 +1,172 @@
-# Laravel PHP Framework
+# Timekeepers
 
-[![Build Status](https://travis-ci.org/laravel/framework.svg)](https://travis-ci.org/laravel/framework)
-[![Total Downloads](https://poser.pugx.org/laravel/framework/d/total.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Stable Version](https://poser.pugx.org/laravel/framework/v/stable.svg)](https://packagist.org/packages/laravel/framework)
-[![Latest Unstable Version](https://poser.pugx.org/laravel/framework/v/unstable.svg)](https://packagist.org/packages/laravel/framework)
-[![License](https://poser.pugx.org/laravel/framework/license.svg)](https://packagist.org/packages/laravel/framework)
+## How to install
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable, creative experience to be truly fulfilling. Laravel attempts to take the pain out of development by easing common tasks used in the majority of web projects, such as authentication, routing, sessions, queueing, and caching.
+### Pre-requisite
+ * Install PHP5.6+ (see https://launchpad.net/~ondrej/+archive/ubuntu/php)
+ * Install Laravel (see https://laravel.com/docs/5.3)
+ * Install Composer (https://getcomposer.org/download/)
+ * Install Node.js (Stable version) (https://github.com/creationix/nvm)
+ * Install Gulp (http://gulpjs.com/)
+ * Install a Mysql Server
 
-Laravel is accessible, yet powerful, providing tools needed for large, robust applications. A superb inversion of control container, expressive migration system, and tightly integrated unit testing support give you the tools you need to build any application with which you are tasked.
+### PHP 5.6 on Ubuntu
+```
+sudo add-apt-repository ppa:ondrej/php
+sudo apt-get update
+sudo apt-get install -y php5.6
+```
+### PHP 5.6 on Debian
+See (https://www.dotdeb.org/instructions/)
+```
+# apt-get install -y php5 php5-mysql php5-cli libapache2-mod-php5
+```
+### Install Node
+```
+nvm install stable # See how to install nvm in pre-requisites
+```
+### Setting up the app
+Installing some libraries needed
+```
+# apt-get install php5.6-mbstring php5.6-xml php5.6-mysql
+```
+Download the code
+```
+git clone https://github.com/wuilliam321/timekeepers.git
+```
+Move to the `timekeepers/` folder
+```
+cd timekeepers/
+```
+Install composer dependencies, you have to go to pre-requisite link and see how to enable composer
+```
+~/composer.phar install # Or the absolute route to composer.phar
+```
+This step is for nvm users only (stable)
+```
+nvm use stable
+```
+Install node dependencies
+```
+npm install --global gulp-cli # Ensure you have gulp installed
+npm install
+```
+Create a mysql database named `timekeepersdb`. First log into the mysql shell
+```
+$ mysql # Use your custom credentials ex: mysql -u root -proot
+```
+In the mysql shell run:
+```
+mysql> create database timekeepersdb; 
+```
+Prepare `.env` file
+```
+cp .env.example .env
+php artisan key:generate
+```
+Open the `.env` file and change these values with the yours
+```
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=tamadb # < HERE GOES YOUR MYSQL DATABASE
+DB_USERNAME=root # < HERE GOES YOUR MYSQL USERNAME
+DB_PASSWORD=root    # HERE GOES YOUR MYSQL PASSWORD
 
-## Official Documentation
+#Setup the SMPT Server or any mail server, Ex Google SMTP
 
-Documentation for the framework can be found on the [Laravel website](http://laravel.com/docs).
+MAIL_DRIVER=smtp
+MAIL_HOST=smtp.gmail.com
+MAIL_PORT=587
+MAIL_USERNAME=somemail@gmail.com
+MAIL_PASSWORD=50m3_Passw0rd
+MAIL_ENCRYPTION=tls
 
-## Contributing
+# ADD THEESE NEW VARS
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](http://laravel.com/docs/contributions).
+SEND_MAIL_WITH_SEMANA_PROCESADA=false
+NOTIFICATION_MAIL=admin@domain.com
+BASE_URL=http://localhost/timekeepers
+```
+Save and close the file
 
-## Security Vulnerabilities
+After install all dependencies you have to run migrations
+```
+php artisan migrate
+```
+Fill database with data values
+```
+php artisan db:seed
+```
+If you want to clean all data and seed database again use:
+```
+php artisan migrate:refresh --seed
+```
+Run:
+```
+gulp # Every time you change the javascript files
+```
+Install the passport and credentials
+```
+php artisan passport:install
+```
+And run:
+```
+php artisan serve
+```
+Now you can go to:
+```
+http://localhost:8000/
+```
+And see the app working
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell at taylor@laravel.com. All security vulnerabilities will be promptly addressed.
+### Configure the Recargos process (in background)
+```
+crontab -e
+```
+Add this line (Dont forget to put the right path to timekeepers directory)
+```
+* * * * *  cd /<PATH_TO_TIMEKEEPERS>/timekeepers/ && php artisan schedule:run >> /dev/null 2>&1
+```
+Save and exit.
 
-## License
+Restart the `cron` service:
+```
+# service cron restart
+```
+You can check if the cron is OK by doing:
+```
+crontab -l
+```
+Install Supervisord to handle the queue worker (for recargos job)
+```
+# apt-get install supervisor
+```
+Create a file named `laravel-worker.conf` in the `/etc/supervisor/conf.d` path:
+```
+# vim /etc/supervisor/conf.d/laravel-worker.conf
+```
+Put the following content into this file
+```
+[program:laravel-worker]
+process_name=%(program_name)s_%(process_num)02d
+command=php /<PATH_TO_TIMEKEEPERS>/timekeepers/artisan queue:work database --sleep=3 --tries=1
+autostart=true
+autorestart=true
+user=<LINUX_ACTIVE_USER>
+numprocs=2
+redirect_stderr=true
+stdout_logfile=/<PATH_TO_TIMEKEEPERS>timekeepers/storage/logs/worker.log
+```
+Save and close the file
 
-The Laravel framework is open-sourced software licensed under the [MIT license](http://opensource.org/licenses/MIT).
+#### Start Supervisor
+```
+# supervisorctl reread
+# supervisorctl update
+# supervisorctl start laravel-worker:*
+```
+
+### Sending mails with exim4 and gmail on Debian/Ubuntu
+See https://wiki.debian.org/GmailAndExim4
+If you configure your gmail account to send mail with exim4, the workers must send you emails when success or errors.
