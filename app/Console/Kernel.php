@@ -26,8 +26,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')
         //          ->hourly();
-//        $schedule->command('recargos:run')->weekly()->wednesdays()->at('9:40');
-        $schedule->command('recargos:run')->daily();
+        $schedule->command('recargos:run')->daily()->at('9:10');
     }
 
     /**
