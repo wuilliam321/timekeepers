@@ -23,7 +23,7 @@
 
 <template>
     <div>
-        <div class="panel panel-default">
+        <div class="panel panel-default planillas-container">
             <div class="panel-body">
                 <div class="row">
                     <div class="col-xs-3">
@@ -151,12 +151,43 @@
                                 :key="planilla.id + 'b'">
                             <td colspan="6">
                                 <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <horas-entrada v-bind:eventHub="eventHub"
+
+                                    <div v-if="isAdmin()" class="admin-view panel-body">
+                                        <horas-entrada v-bind:user="user"
+                                                       v-bind:days_ago="days_ago"
+                                                       v-bind:eventHub="eventHub"
                                                        v-bind:planilla_id="planilla.id"
                                                        v-bind:colaborador_id="planilla.colaborador_id"
                                                        v-bind:horas_entrada="planilla.horas_entrada"></horas-entrada>
-                                        <horas-laboradas v-bind:eventHub="eventHub"
+                                        <horas-laboradas v-bind:user="user"
+                                                         v-bind:days_ago="days_ago"
+                                                         v-bind:eventHub="eventHub"
+                                                         v-bind:colaborador_id="planilla.colaborador_id"
+                                                         v-bind:planilla_id="planilla.id"
+                                                         v-bind:cuentas_beneficios="cuentas_beneficios"
+                                                         v-bind:beneficios="beneficios"
+                                                         v-bind:cuentas_costo="cuentas_costo"
+                                                         v-bind:horas_laboradas="planilla.horas_laboradas"></horas-laboradas>
+                                        <div>
+                                            <button v-show="isSaving" class="btn btn-primary disabled col-xs-1 pull-right">
+                                                <i class="fa fa-spinner fa-spin"></i>&nbsp;
+                                            </button>
+                                            <button v-show="!isSaving" v-on:click="saveHoras(planilla.id)" class="btn btn-primary pull-right">
+                                                <span class="glyphicon glyphicon-floppy-disk" aria-hidden="true"></span>
+                                                Guardar
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div v-else class="panel-body">
+                                        <horas-entrada v-bind:user="user"
+                                                       v-bind:days_ago="days_ago"
+                                                       v-bind:eventHub="eventHub"
+                                                       v-bind:planilla_id="planilla.id"
+                                                       v-bind:colaborador_id="planilla.colaborador_id"
+                                                       v-bind:horas_entrada="planilla.horas_entrada"></horas-entrada>
+                                        <horas-laboradas v-bind:user="user"
+                                                         v-bind:days_ago="days_ago"
+                                                         v-bind:eventHub="eventHub"
                                                          v-bind:colaborador_id="planilla.colaborador_id"
                                                          v-bind:planilla_id="planilla.id"
                                                          v-bind:cuentas_beneficios="cuentas_beneficios"
@@ -236,6 +267,7 @@
                 isSaving: false,
             };
         },
+        props: ['user', 'days_ago'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -314,6 +346,8 @@
                 var $element = $(event.currentTarget);
                 $element.next().toggleClass('hidden');
                 $element.find('i').toggleClass('hidden');
+
+                $('.admin-view').css('width', $('.planillas-container').width() - 45);
             },
 
             getCuentasCosto() {
@@ -431,6 +465,10 @@
                 this.isSaving = true;
                 this.eventHub.$emit('horasEntrada.save' + planilla_id);
                 this.eventHub.$emit('horasLaboradas.save' + planilla_id);
+            },
+
+            isAdmin() {
+                return this.user.rol === 'admin';
             }
         },
 

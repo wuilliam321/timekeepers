@@ -20,7 +20,8 @@
         <table class="table table-borderless m-b-none">
             <thead>
                 <tr>
-                    <th class="col-xs-3"></th>
+                    <th v-if="isAdmin()"></th>
+                    <th v-else class="col-xs-3"></th>
                     <th v-for="fecha in getUltimasFechas()" class="text-center">
                         {{ fecha | date_format('MMM DD') }}
                     </th>
@@ -88,7 +89,7 @@
             };
         },
 
-        props: ['horas_entrada', 'colaborador_id', 'planilla_id', 'eventHub', 'isSaving'],
+        props: ['user', 'days_ago', 'horas_entrada', 'colaborador_id', 'planilla_id', 'eventHub', 'isSaving'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -116,7 +117,7 @@
             },
 
             getUltimasFechas() {
-                return _.map(_.range(3, 0), function(day) {
+                return _.map(_.range(this.days_ago, 0), function(day) {
                     return moment().subtract(day - 1, 'days');
                 });
             },
@@ -193,6 +194,10 @@
                 hora.minutos = value;
                 this.fixMinutosLeadingZero(hora);
             },
+
+            isAdmin() {
+                return this.user.rol === 'admin';
+            }
         },
 
         filters: {

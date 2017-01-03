@@ -29,7 +29,7 @@
             return {};
         },
 
-        props: ['hora_id', 'planilla_id', 'eventHub'],
+        props: ['user', 'hora_id', 'planilla_id', 'eventHub'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -53,7 +53,7 @@
             },
 
             remove: function() {
-                if (confirm('Esta seguro?')) {
+                if (this.user.rol === 'admin' && confirm('Esta seguro?')) {
                     this.$http.delete(BASE_URL + '/timekeepers/api/horas_laboradas/' + this.hora_id).then(response => {
                         toastr.success('Horas laboradas eliminadas correctamente', 'Exito!');
                         this.eventHub.$emit('horas_laboradas.delete', this.planilla_id, this.hora_id);

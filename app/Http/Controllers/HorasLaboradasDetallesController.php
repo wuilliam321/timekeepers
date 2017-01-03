@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\HorasLaboradasDetalle;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class HorasLaboradasDetallesController extends Controller
 {
     public function getUltimasHorasByHorasLaboradaId($id)
     {
-        $limit = 3;
+        $limit = config('app.days_ago_no_admin_records');
+        if (Auth::user()->rol === 'admin') {
+            $limit = config('app.days_ago_admin_records');
+        }
         $horasLaboradasDetalleModel = new HorasLaboradasDetalle();
         $ultimasFechas = $this->getUltimasFechas($limit);
         $from = $ultimasFechas[sizeof($ultimasFechas) - 1];

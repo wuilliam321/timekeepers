@@ -22,9 +22,12 @@
         <table class="table table-borderless m-b-none">
             <thead>
             <tr>
-                <th class="col-xs-3">Cuenta de costo</th>
-                <th class="col-xs-2">Beneficio</th>
-                <th class="col-xs-3">Cuenta de beneficio</th>
+                <th v-if="!isAdmin()" class="col-xs-3">Cuenta de costo</th>
+                <th v-if="!isAdmin()" class="col-xs-2">Beneficio</th>
+                <th v-if="!isAdmin()" class="col-xs-3">Cuenta de beneficio</th>
+                <th v-if="isAdmin()">Cuenta de costo</th>
+                <th v-if="isAdmin()">Beneficio</th>
+                <th v-if="isAdmin()">Cuenta de beneficio</th>
                 <th v-for="hora in getUltimasFechas()" class="text-center">
                     {{ hora | date_format('MMM DD') }}
                 </th>
@@ -98,7 +101,9 @@
                 </td>
                 <td>
                     <remove-hora
+                            v-if="isAdmin()"
                             v-bind:eventHub="eventHub"
+                            v-bind:user="user"
                             v-bind:planilla_id="planilla_id"
                             v-bind:hora_id="hora.id"></remove-hora>
                 </td>
@@ -164,11 +169,11 @@
         };
     }
 
-    function initializeNewDetalles() {
-        var ultimas_fechas = _.map(_.range(3, 0), function (day) {
+    function initializeNewDetalles(days) {
+        var ultimas_fechas = _.map(_.range(days, 0), function (day) {
             return moment().subtract(day - 1, 'days').format('YYYY-MM-DD');
         });
-        return _.map(_.range(0, 3), function (index) {
+        return _.map(_.range(0, days), function (index) {
             return {
                 fecha_laborada: ultimas_fechas[index],
                 horas_laboradas: '0.00',
@@ -180,14 +185,15 @@
          * The component's data.
          */
         data() {
+            var days = this.days_ago;
             return {
                 horas_indexes: 0,
                 new_horas_laboradas: initializeNewHorasLaboradas(),
-                new_detalles: initializeNewDetalles(),
+                new_detalles: initializeNewDetalles(days),
             };
         },
 
-        props: ['horas_laboradas', 'planilla_id', 'colaborador_id', 'cuentas_costo', 'beneficios', 'cuentas_beneficios', 'eventHub', 'isSaving'],
+        props: ['user', 'days_ago', 'horas_laboradas', 'planilla_id', 'colaborador_id', 'cuentas_costo', 'beneficios', 'cuentas_beneficios', 'eventHub', 'isSaving'],
 
         /**
          * Prepare the component (Vue 1.x).
@@ -215,7 +221,7 @@
             },
 
             getUltimasFechas() {
-                return _.map(_.range(3, 0), function (day) {
+                return _.map(_.range(this.days_ago, 0), function (day) {
                     return moment().subtract(day - 1, 'days');
                 });
             },
@@ -274,6 +280,10 @@
                 }
 
                 hora.horas_laboradas = parseFloat(value).toFixed(2);
+            },
+
+            isAdmin() {
+                return this.user.rol === 'admin';
             }
 
         },

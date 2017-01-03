@@ -88,6 +88,8 @@ MAIL_ENCRYPTION=tls
 SEND_MAIL_WITH_SEMANA_PROCESADA=false
 NOTIFICATION_MAIL=admin@domain.com
 BASE_URL=http://localhost/timekeepers
+DAYS_AGO_RECORDS_ADMIN=15
+DAYS_AGO_RECORDS_NO_ADMIN=3
 ```
 Save and close the file
 

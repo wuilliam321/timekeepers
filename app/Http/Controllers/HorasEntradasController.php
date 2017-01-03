@@ -5,12 +5,16 @@ namespace App\Http\Controllers;
 use App\HorasEntrada;
 use Illuminate\Http\Request;
 use App\Http\Requests;
+use Illuminate\Support\Facades\Auth;
 
 class HorasEntradasController extends Controller
 {
     public function getHorasEntradasByColaboradorId($id)
     {
-        $limit = 3;
+        $limit = config('app.days_ago_no_admin_records');
+        if (Auth::user()->rol === 'admin') {
+            $limit = config('app.days_ago_admin_records');
+        }
         $horasEntradaModel = new HorasEntrada();
         $horasEntradas = $horasEntradaModel->getByColaboradorId($id);
         $ultimasFechas = $this->getUltimasFechas($limit);

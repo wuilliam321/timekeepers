@@ -16,6 +16,8 @@ return [
     'send_mail_with_semana_procesada' =>  env('SEND_MAIL_WITH_SEMANA_PROCESADA', false),
     'notification_mail' => env('NOTIFICATION_MAIL', 'no-reply@example.com'),
     'base_url' => env('BASE_URL', 'http://localhost:8000'),
+    'days_ago_admin_records' => env('DAYS_AGO_RECORDS_ADMIN', 16),
+    'days_ago_no_admin_records' => env('DAYS_AGO_RECORDS_NO_ADMIN', 3),
 
     /*
     |--------------------------------------------------------------------------

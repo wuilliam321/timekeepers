@@ -20,7 +20,7 @@
     <div class="wrapper wrapper-content animated fadeInRight">
         <div class="row">
             <div class="col-lg-12">
-                <planillas-index></planillas-index>
+                <planillas-index v-bind:days_ago="{{$days_ago}}" v-bind:user="{{Auth::user()}}"></planillas-index>
             </div>
         </div>
     </div>

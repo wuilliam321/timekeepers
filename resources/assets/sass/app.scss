@@ -61,3 +61,10 @@
     margin: 0;
   }
 }
+
+.admin-view {
+  overflow-x: auto;
+}
+.admin-view > div {
+  width: 2000px;
+}
