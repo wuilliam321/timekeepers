@@ -20,8 +20,8 @@
         <table class="table table-borderless m-b-none">
             <thead>
                 <tr>
-                    <th v-if="isAdmin()"></th>
-                    <th v-else class="col-xs-3"></th>
+                    <th v-if="isAdmin()" class="col-xs-3"></th>
+                    <th v-else class="col-xs-8"></th>
                     <th v-for="fecha in getUltimasFechas()" class="text-center">
                         {{ fecha | date_format('MMM DD') }}
                     </th>
@@ -32,7 +32,7 @@
             <tbody>
             <tr>
                 <!-- Action -->
-                <td style="vertical-align: middle;">
+                <td style="vertical-align: middle;" class="text-right">
                     Hora de entrada
                 </td>
 
@@ -70,7 +70,8 @@
                     </div>
 
                 </td>
-                <td></td>
+                <td v-if="isAdmin()"><span style="width: 34px; display: block"></span></td>
+                <td v-else></td>
             </tr>
             </tbody>
         </table>

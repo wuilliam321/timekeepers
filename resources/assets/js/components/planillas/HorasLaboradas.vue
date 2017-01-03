@@ -25,9 +25,9 @@
                 <th v-if="!isAdmin()" class="col-xs-3">Cuenta de costo</th>
                 <th v-if="!isAdmin()" class="col-xs-2">Beneficio</th>
                 <th v-if="!isAdmin()" class="col-xs-3">Cuenta de beneficio</th>
-                <th v-if="isAdmin()">Cuenta de costo</th>
-                <th v-if="isAdmin()">Beneficio</th>
-                <th v-if="isAdmin()">Cuenta de beneficio</th>
+                <th v-if="isAdmin()" class="col-xs-1">Cuenta de costo</th>
+                <th v-if="isAdmin()" class="col-xs-1">Beneficio</th>
+                <th v-if="isAdmin()" class="col-xs-1">Cuenta de beneficio</th>
                 <th v-for="hora in getUltimasFechas()" class="text-center">
                     {{ hora | date_format('MMM DD') }}
                 </th>
